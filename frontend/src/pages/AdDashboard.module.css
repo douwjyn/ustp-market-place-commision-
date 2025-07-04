@@ -1,0 +1,603 @@
+/* AdDashboard.module.css - Responsive Version */
+.dashboardContainer {
+  position: relative;
+  width: 100%;
+  min-height: 100vh;
+  background: #FFFFFF;
+  font-family: 'Poppins', sans-serif;
+  overflow-x: auto;
+}
+
+/* Header Styles */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  height: 96px;
+  background: #FFF9F9;
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 clamp(15px, 3vw, 20px);
+}
+
+.logo {
+  font-weight: 400;
+  font-size: clamp(16px, 2vw, 18px);
+  line-height: 1.5;
+  text-align: center;
+  letter-spacing: 0.1em;
+  color: #000000;
+  white-space: nowrap;
+  min-width: 120px;
+}
+
+.userProfile {
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1.5vw, 10px);
+}
+
+.userImage {
+  width: clamp(40px, 5vw, 61px);
+  height: clamp(40px, 5vw, 60px);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.userName {
+  font-weight: 400;
+  font-size: clamp(14px, 1.8vw, 18px);
+  line-height: 1.5;
+  text-align: center;
+  letter-spacing: 0.1em;
+  color: #000000;
+  white-space: nowrap;
+  min-width: 100px;
+}
+
+.notificationIcon {
+  position: relative;
+  width: clamp(30px, 3vw, 37px);
+  height: clamp(30px, 3vw, 38px);
+  cursor: pointer;
+}
+
+.notificationDot {
+  position: absolute;
+  width: clamp(12px, 1.5vw, 16px);
+  height: clamp(12px, 1.5vw, 16px);
+  right: -8px;
+  top: -8px;
+  background: #213567;
+  border-radius: 50%;
+}
+
+/* Sidebar Styles */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 96px;
+  width: clamp(250px, 20vw, 273px);
+  height: calc(100vh - 96px);
+  background: #FFFFFF;
+  border-right: 0.5px solid rgba(0, 0, 0, 0.5);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  padding: clamp(30px, 4vw, 50px) 20px;
+  overflow-y: auto;
+  z-index: 50;
+  transition: transform 0.3s ease;
+}
+
+.sidebarItemActive, .sidebarItem {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: clamp(25px, 3vw, 40px);
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.sidebarItemActive {
+  color: #6D87D6;
+  background-color: rgba(109, 135, 214, 0.1);
+}
+
+.sidebarItem {
+  color: #000000;
+}
+
+.sidebarItem:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.sidebarItemActive span, .sidebarItem span {
+  font-weight: 400;
+  font-size: clamp(16px, 1.8vw, 20px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  white-space: nowrap;
+}
+
+.sidebarIcon {
+  position: relative;
+  width: clamp(32px, 3vw, 40px);
+  height: clamp(32px, 3vw, 40px);
+  flex-shrink: 0;
+}
+
+.iconCircle1, .iconCircle2 {
+  position: absolute;
+  width: clamp(12px, 1.5vw, 16px);
+  height: clamp(12px, 1.5vw, 16px);
+  border-radius: 50%;
+  background: #213567;
+}
+
+.iconCircle1 {
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.iconCircle2 {
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.shoppingBagIcon {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  border: 3px solid #1E1E1E;
+  border-radius: 4px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Main Content Styles */
+.mainContent {
+  margin-left: clamp(250px, 20vw, 273px);
+  padding: clamp(20px, 3vw, 34px);
+  min-height: calc(100vh - 96px);
+}
+
+.statsContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: clamp(20px, 4vw, 56px);
+  margin-bottom: clamp(30px, 4vw, 56px);
+}
+
+.statCardOrange, .statCardBlue {
+  min-width: 280px;
+  height: clamp(160px, 20vw, 195px);
+  border-radius: 10px;
+  position: relative;
+  padding: 20px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.statCardOrange:hover, .statCardBlue:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.statCardOrange {
+  background: rgba(255, 109, 5, 0.5);
+}
+
+.statCardBlue {
+  background: rgba(33, 53, 103, 0.5);
+}
+
+.statIcon {
+  position: absolute;
+  width: clamp(50px, 6vw, 69px);
+  height: clamp(50px, 6vw, 74px);
+  top: 20px;
+  left: 20px;
+}
+
+.personIcon {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 50%;
+}
+
+.statNumber {
+  position: absolute;
+  top: clamp(60px, 8vw, 80px);
+  left: 20px;
+  font-weight: 400;
+  font-size: clamp(32px, 5vw, 50px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  color: #000000;
+}
+
+.statLabel {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  font-weight: 400;
+  font-size: clamp(12px, 1.5vw, 15px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  color: rgba(0, 0, 0, 0.5);
+}
+
+/* Content Grid for Charts */
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: clamp(20px, 3vw, 30px);
+  align-items: start;
+}
+
+/* Visitors Chart */
+.visitorsChart {
+  width: 100%;
+  min-height: clamp(250px, 30vw, 297px);
+  background: rgba(255, 255, 255, 0.5);
+  border: 0.5px solid rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: clamp(30px, 4vw, 56px);
+}
+
+.chartTitle {
+  font-weight: 400;
+  font-size: clamp(13px, 1.5vw, 15px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  color: #000000;
+  margin-bottom: 20px;
+}
+
+.chartContainer {
+  position: relative;
+  width: 100%;
+  height: clamp(200px, 25vw, 250px);
+}
+
+.yAxis {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: space-between;
+  width: 30px;
+}
+
+.yAxis span {
+  font-weight: 400;
+  font-size: clamp(8px, 1vw, 10px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+.chartLines {
+  position: absolute;
+  left: 40px;
+  top: 0;
+  width: calc(100% - 60px);
+  height: 100%;
+}
+
+.chartLine {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.chartLineDashed {
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  border-top: 1px dashed rgba(0, 0, 0, 0.3);
+}
+
+.dataLine {
+  position: absolute;
+  width: 100%;
+  height: 2px;
+  background: #5B84FF;
+  border-radius: 2px;
+}
+
+.dataPoints {
+  position: absolute;
+  left: 40px;
+  top: 0;
+  width: calc(100% - 60px);
+  height: calc(100% - 30px);
+}
+
+.dataPoint {
+  position: absolute;
+  width: clamp(8px, 1vw, 12px);
+  height: clamp(8px, 1vw, 12px);
+  background: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.dataPoint:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+.xAxis {
+  position: absolute;
+  bottom: 0;
+  left: 40px;
+  width: calc(100% - 60px);
+  display: flex;
+  justify-content: space-between;
+}
+
+.xAxis span {
+  font-weight: 400;
+  font-size: clamp(8px, 1vw, 10px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  color: rgba(0, 0, 0, 0.7);
+}
+
+/* Active Users Card */
+.activeUsersCard {
+  position: static;
+  width: 100%;
+  max-width: clamp(320px, 35vw, 409px);
+  min-height: clamp(350px, 40vw, 424px);
+  background: rgba(255, 255, 255, 0.5);
+  border: 0.5px solid rgba(0, 0, 0, 0.5);
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.activeUsersCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cardHeader {
+  width: 100%;
+  height: clamp(56px, 7vw, 68px);
+  background: rgba(255, 255, 255, 0.5);
+  border-bottom: 0.5px solid rgba(0, 0, 0, 0.5);
+  border-radius: 10px 10px 0 0;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  font-weight: 400;
+  font-size: clamp(14px, 1.8vw, 18px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  color: #000000;
+}
+
+.activeDot {
+  width: clamp(12px, 1.5vw, 16px);
+  height: clamp(12px, 1.5vw, 16px);
+  background: #00FF55;
+  border-radius: 50%;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.activeUsersContent {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100% - clamp(56px, 7vw, 68px));
+}
+
+.activeUsersPercentage {
+  font-weight: 400;
+  font-size: clamp(32px, 5vw, 50px);
+  line-height: 1.5;
+  letter-spacing: 0.1em;
+  color: #213567;
+  margin: clamp(20px, 3vw, 40px) 0;
+}
+
+.activeUsersChart {
+  position: relative;
+  width: clamp(180px, 25vw, 267px);
+  height: clamp(180px, 25vw, 259px);
+  flex-shrink: 0;
+}
+
+.chartBackground {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #7F90C2;
+  border-radius: 50%;
+}
+
+.chartFill {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #213567;
+  border-radius: 50%;
+  clip-path: polygon(0 0, 100% 0, 100% 40%, 0 40%);
+  transition: clip-path 0.5s ease;
+}
+
+/* Mobile Responsive Breakpoints */
+@media (max-width: 1024px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+  
+  .activeUsersCard {
+    max-width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+  }
+  
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .mainContent {
+    margin-left: 0;
+  }
+  
+  .header {
+    padding: 0 15px;
+  }
+  
+  .userProfile {
+    gap: 8px;
+  }
+  
+  .userName {
+    display: none;
+  }
+  
+  .statsContainer {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .statCardOrange, .statCardBlue {
+    min-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .header {
+    height: 70px;
+    padding: 0 10px;
+  }
+  
+  .sidebar {
+    top: 70px;
+    height: calc(100vh - 70px);
+    width: 100%;
+    max-width: 280px;
+  }
+  
+  .mainContent {
+    padding: 15px;
+    min-height: calc(100vh - 70px);
+  }
+  
+  .logo {
+    font-size: 14px;
+    min-width: 80px;
+  }
+  
+  .userImage {
+    width: 35px;
+    height: 35px;
+  }
+  
+  .notificationIcon {
+    width: 25px;
+    height: 25px;
+  }
+  
+  .activeUsersChart {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* Utility Classes for Mobile Menu Toggle */
+.menuToggle {
+  display: none;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+@media (max-width: 768px) {
+  .menuToggle {
+    display: block;
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 25;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus styles for better accessibility */
+.sidebarItem:focus,
+.sidebarItemActive:focus,
+.dataPoint:focus,
+.menuToggle:focus {
+  outline: 2px solid #6D87D6;
+  outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+  .sidebar,
+  .notificationIcon {
+    display: none;
+  }
+  
+  .mainContent {
+    margin-left: 0;
+  }
+  
+  .header {
+    position: static;
+  }
+}
