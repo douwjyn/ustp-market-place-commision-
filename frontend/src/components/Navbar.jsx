@@ -144,7 +144,7 @@ const Navbar = () => {
             <img
               src={logo}
               alt='Logo'
-              className='h-8 md:h-10 w-auto cursor-pointer transition-transform hover:scale-105'
+              className='h-8 md:h-12 w-auto cursor-pointer transition-transform hover:scale-105'
               onClick={() => navigate('/app/profile/')}
             />
 
@@ -278,11 +278,24 @@ const Navbar = () => {
                   onClick={toggleDropdown}
                   className='flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-all duration-200'
                 >
-                    <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 flex items-center justify-center'>
-                      {user.image_path ? <img className='rounded-full' src={`http://localhost:8000/storage/${user.image_path}`}/> : (
-                        <User size={20} className='text-gray-600' />
-                      )}
-                    </div>
+                  <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 flex items-center justify-center'>
+                    {user?.image_path ? (
+                      <img
+                        className='w-full h-full object-cover rounded-full'
+                        src={`http://localhost:8000/storage/${user.image_path}`}
+                        alt={`${user.first_name}'s profile`}
+                        onError={(e) => {
+                          // Fallback to default icon if image fails to load
+                          e.target.style.display = 'none';
+                          e.target.nextSibling.style.display = 'flex';
+                        }}
+                      />
+                    ) : null}
+                    <User
+                      size={20}
+                      className={`text-gray-600 ${user?.image_path ? 'hidden' : 'block'}`}
+                    />
+                  </div>
                   <div className='hidden md:flex items-center gap-1'>
                     <span className='text-sm font-medium text-gray-700'>
                       {user?.middle_name

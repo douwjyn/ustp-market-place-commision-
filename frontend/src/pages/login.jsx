@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { api } from '../lib/axios';
-import { Eye, EyeOff, User, Lock } from 'lucide-react';
+import { Eye, EyeOff, User, Lock, XIcon } from 'lucide-react';
 
 export default function Login() {
   const [access_token, setAccess_token] = useState(null);
@@ -27,7 +27,7 @@ export default function Login() {
 
       });
     } catch (err) {
-      setError(err.response?.data?.message);
+      setError("Invalid login, please try again.");
     }
   }
 
@@ -39,34 +39,54 @@ export default function Login() {
 
   return (
     <main
-      style={{ backgroundImage: "url('/src/assets/bg-ustp.png')" }}
-      className='flex flex-col w-screen h-screen bg-gradient-to-br from-[#F8FAFC] to-[#E2E8F0] items-center justify-center p-4 md:p-8  bg-cover bg-center bg-no-repeat'
+      // style={{ backgroundImage: "url('/src/assets/bg-ustp.png')" }}
+      className='relative flex flex-col w-screen h-screen items-center justify-center p-4 md:p-8  bg-cover bg-center bg-no-repeat'
     >
-      <section className='flex flex-col w-full items-center justify-center space-y-2'>
-        <article className='border border-gray-200 w-full max-w-md bg-gray-100 rounded-2xl p-6 md:p-8 space-y-2'>
-          <div className='text-center space-y-2'>
+
+      <div
+        className="absolute inset-0 z-0 "
+        style={{
+          backgroundImage: "url('/src/assets/bg-ustp.png')",
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          filter: 'blur(12px)',
+        }}
+      />
+      <section className=' relative z-10 flex flex-col w-full items-center justify-center space-y-2'>
+        <article className='border border-gray-200 w-full max-w-md bg-gray-100 rounded-xl p-6 md:p-8 space-y-2'>
+          <div className=' space-y-2'>
+            {/* <Link
+              to='/'
+              className='text-white bg-gray-700 rounded-sm px-2 py-1.5 text-sm hover:underline'
+            >
+              Home
+            </Link> */}
             <header className='flex flex-col items-center mb-4'>
+
               <img
                 src='/src/assets/logo.png'
                 alt='USTP Logo'
                 className='w-20'
               />
+              <h1 className='text-center text-[#183B4E] tracking-wide text-3xl font-bold leading-tight'>
+                USTP MARKETPLACE
+              </h1>
+              {/* <h2 className='text-[#183B4E]'></h2> */}
+              <p className='text-gray-400 text-sm'>Welcome Back! Sign in to your account.</p>
             </header>
-            <h1 className='text-center text-[#183B4E] tracking-wide text-lg leading-tight'>
-              USTP MARKETPLACE FOR STUDENTS
-            </h1>
-            <h2 className='text-3xl font-bold text-[#183B4E]'>Welcome Back</h2>
-            <p className='text-gray-600'>Sign in to your account</p>
+
           </div>
 
           {/* Error card */}
-        {error && (
-          <div className='bg-red-200 border border-red-500 p-4 text-center rounded-sm shadow-sm text-red-500 relative'>
-            <button onClick={() => setError('')} className='absolute top-0 right-2'>X</button>
-            {error}
-          </div>
+          {error && (
+            <div className='bg-red-50 border border-red-200 px-2 py-4 text-center rounded-sm  text-red-500 relative'>
+              <button onClick={() => setError('')} className='absolute top-2 right-2'>
+                <XIcon size={16}/>
+              </button>
+              {error}
+            </div>
 
-        )}
+          )}
 
           <form
             className='space-y-4 text-[#183B4E]'
@@ -87,7 +107,7 @@ export default function Login() {
                     type='text'
                     placeholder='Email'
                     name='email'
-                    className={`w-full pl-12 pr-4 py-3 text-black placeholder-gray-500 bg-white border ${error ? 'border-red-500': 'border-gray-200'} rounded-md focus:border-[#183B4E] focus:outline-none transition-colors`}
+                    className={`w-full pl-12 pr-4 py-3 text-black placeholder-gray-500 bg-white border ${error ? 'border-2 border-red-400' : 'border-gray-200'} rounded-md focus:ring-2 focus:ring-blue-400 outline-none transition-colors`}
                     required
                   />
                 </div>
@@ -105,7 +125,7 @@ export default function Login() {
                     placeholder='Password'
                     name='password'
                     autoComplete='current-password'
-                    className={`w-full pl-12 pr-4 py-3 text-black placeholder-gray-500 bg-white border ${error ? 'border-red-500': 'border-gray-200'} rounded-md focus:border-[#183B4E] focus:outline-none transition-colors`}
+                    className={`w-full pl-12 pr-4 py-3 text-black placeholder-gray-500 bg-white border ${error ? 'border-2 border-red-400' : 'border-gray-200'} rounded-md focus:ring-2 focus:ring-blue-400 focus:outline-none transition-colors`}
                     required
                   />
                   {showPassword && (
@@ -121,9 +141,23 @@ export default function Login() {
               </div>
 
 
-                {/* {error ? error : ''} */}
+              {/* {error ? error : ''} */}
 
             </div>
+
+
+            {/* <Link
+              to='/'
+              className='hover:text-[#183B4E] transition-colors text-sm hover:underline'
+            >
+              Home
+            </Link> */}
+            <button
+              type='submit'
+              className='w-full mt-4 py-3 px-6 text-white font-semibold bg-[#183B4E] rounded-md hover:bg-[#DDA853] hover:text-black transition-all duration-300 hover:-translate-y-1'
+            >
+              Sign In
+            </button>
 
             <nav className='flex text-sm text-gray-600 justify-between'>
               <Link
@@ -140,18 +174,6 @@ export default function Login() {
               </Link>
 
             </nav>
-            <Link
-              to='/'
-              className='hover:text-[#183B4E] transition-colors text-sm hover:underline'
-            >
-              Home
-            </Link>
-            <button
-              type='submit'
-              className='w-full mt-4 py-3 px-6 text-white font-semibold bg-[#183B4E] rounded-md hover:bg-[#DDA853] hover:text-black transition-all duration-300 hover:-translate-y-1'
-            >
-              Sign In
-            </button>
           </form>
         </article>
       </section>

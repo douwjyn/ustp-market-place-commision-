@@ -18,9 +18,10 @@ export default function ProductCard({ product, onAddToCart, viewMode }) {
     e.target.src = '/src/assets/placeholder.jpg';
   };
 
-  const getOriginalPrice = (currentPrice) => {
-    return Math.round(currentPrice * 1.2);
-  };
+const getOriginalPrice = (discountedPrice, discountPercent) => {
+  if (!discountPercent || discountPercent <= 0) return null;
+  return discountedPrice / (1 - discountPercent / 100);
+};
 
   const handleProductClick = () => {
     const productId = product.id || product.product_id;
@@ -54,7 +55,7 @@ export default function ProductCard({ product, onAddToCart, viewMode }) {
             <Star size={12} fill='currentColor' />
             {product.discount}% OFF
           </div>
-      }
+        }
 
         <button className='absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors'>
           <Heart size={16} className='text-gray-600 hover:text-red-500' />
@@ -66,23 +67,25 @@ export default function ProductCard({ product, onAddToCart, viewMode }) {
           {product.name}
         </h3>
 
-        <div className='space-y-1'>
-          <div className='flex items-center justify-between'>
-            <span className='text-[#183B4E] font-bold text-lg'>
-              ₱{product.price?.toLocaleString()}
-            </span>
-            <span className='text-gray-400 text-sm line-through'>
-              ₱{getOriginalPrice(product.price)?.toLocaleString()}
-            </span>
-          </div>
-          <p className='text-green-600 text-xs font-medium'>
-            Save ₱
-            {(
-              getOriginalPrice(product.price) - product.price
-            )?.toLocaleString()}
-          </p>
-        </div>
-
+       <div className='flex items-center justify-between'>
+  <span className='text-[#183B4E] font-bold text-lg'>
+    ₱{Number(product.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+  </span>
+  {product.discount > 0 && (
+    <span className='text-gray-400 text-sm line-through'>
+      ₱{getOriginalPrice(Number(product.price), product.discount)?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+    </span>
+  )}
+</div>
+{product.discount > 0 && (() => {
+  const original = getOriginalPrice(Number(product.price), product.discount);
+  const save = original - Number(product.price);
+  return save > 0.01 ? (
+    <p className='text-green-600 text-xs font-medium'>
+      Save ₱{save.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+    </p>
+  ) : null;
+})()}
         <button
           onClick={() => handleAddToCartClick(product.id)}
           className='w-full flex items-center justify-center gap-2 py-2.5 bg-[#DDA853] text-black rounded-xl hover:bg-[#183B4E] hover:text-white transition-all duration-300 font-medium'

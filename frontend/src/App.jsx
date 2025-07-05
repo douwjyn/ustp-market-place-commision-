@@ -41,7 +41,7 @@ import axios from 'axios'
 import unloadHandler from './components/UnloadHandler.jsx';
 export default function App() {
 
- 
+
 
 
   return (
@@ -51,21 +51,18 @@ export default function App() {
           <CartProvider>
             <Toaster />
             <Routes>
-              <Route path='/unload' element={<unloadHandler />} />
-              <Route element={<GuestLayout />}>
-                <Route path='/' index element={<Welcome />} />
-                <Route path='/login' element={<Login />} />
-                <Route path='/create-account' element={<CreateAccount />} />
-                <Route path='/thank-you' element={<ThankYouPage />} />
-                <Route path='/forgot-password' element={<ForgotPassword />} />
+              <Route path='/' index element={<Welcome />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/create-account' element={<CreateAccount />} />
+              <Route path='/thank-you' element={<ThankYouPage />} />
+              <Route path='/forgot-password' element={<ForgotPassword />} />
 
-                <Route path='/admin'>
-                  <Route path='login' element={<AddLogin />} />
-                  <Route
-                    path='create-account'
-                    element={<CreateAdminAccount />}
-                  />
-                </Route>
+              <Route path='/admin'>
+                <Route path='login' element={<AddLogin />} />
+                <Route
+                  path='create-account'
+                  element={<CreateAdminAccount />}
+                />
               </Route>
 
               <Route path='/app' element={<DefaultLayout />}>
@@ -105,12 +102,12 @@ export default function App() {
 
               </Route>
 
-              <Route path='admin' element={<AdminLayout/>}>
+              <Route path='admin' element={<AdminLayout />}>
                 <Route path='dashboard' element={<AdDashboard />} />
                 <Route path='account' element={<AdminAccountPage />} />
                 <Route path='profile' element={<AdminProfilePage />} />
                 <Route path='shop-view' element={<AdminShopViewPage />} />
-                <Route path='all-notifications' element={<AllNotificationsPage/>}/>
+                <Route path='all-notifications' element={<AllNotificationsPage />} />
               </Route>
             </Routes>
           </CartProvider>

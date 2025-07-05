@@ -142,9 +142,9 @@ const UserProfileModal = ({ user, isOpen, onClose, onStatusChange }) => {
                 ? 'bg-gradient-to-r from-purple-500 to-indigo-500'
                 : 'bg-gradient-to-r from-blue-500 to-indigo-500'
               }`}>
-                {user.image_path ? <img className='rounded-full' src={`http://localhost:8000/storage/${user.image_path}`}/> : (
-                        <User size={20} className='text-gray-600' />
-                      )}
+              {user.image_path ? <img className='rounded-full' src={`http://localhost:8000/storage/${user.image_path}`} /> : (
+                <User size={20} className='text-gray-600' />
+              )}
               {/* <User className="w-8 h-8 sm:w-10 sm:h-10 text-white" /> */}
             </div>
             <div>
@@ -392,9 +392,9 @@ const UsersTable = ({ searchTerm, setSearchTerm }) => {
                             ? 'bg-gradient-to-r from-red-400 to-red-500'
                             : 'bg-gradient-to-r from-blue-500 to-indigo-500'
                             }`}>
-                            {user.image_path ? <img className='rounded-full' src={`http://localhost:8000/storage/${user.image_path}`}/> : (
-                        <User size={20} className='text-gray-600' />
-                      )}
+                            {user.image_path ? <img className='rounded-full' src={`http://localhost:8000/storage/${user.image_path}`} /> : (
+                              <User size={20} className='text-gray-600' />
+                            )}
                           </div>
                           <span className={`text-sm font-medium truncate ${user.status === 'Inactive' && user.role === 'Seller'
                             ? 'text-gray-500'
@@ -604,9 +604,9 @@ const ActivityManagement = () => {
             <div className="space-y-4 animate-in fade-in duration-200">
               <div className="grid grid-cols-3 gap-4 p-4 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
                 <div className="flex items-center space-x-2">
-                 {user.image_path ? <img className='rounded-full' src={`http://localhost:8000/storage/${user.image_path}`}/> : (
-                        <User size={20} className='text-gray-600' />
-                      )}
+                  {user.image_path ? <img className='rounded-full' src={`http://localhost:8000/storage/${user.image_path}`} /> : (
+                    <User size={20} className='text-gray-600' />
+                  )}
                   <span className="text-sm font-medium text-gray-700">Name:</span>
                 </div>
                 <div className="col-span-2">
@@ -1145,7 +1145,7 @@ export default function AdDashboard() {
     <div className="space-y-6">
       {/* Stats Cards Row */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-gradient-to-br from-orange-400 to-orange-500 rounded-3xl p-6 text-white shadow-xl">
+        <div className="bg-[#22336c] rounded-xl p-6 text-white shadow-md">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -1159,7 +1159,7 @@ export default function AdDashboard() {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-slate-500 to-slate-600 rounded-3xl p-6 text-white shadow-xl">
+        <div className="bg-slate-200 rounded-xl p-6 text-gray-700 shadow-md">
           <div className="flex items-center space-x-4">
             <div className="w-12 h-12 bg-white/20 rounded-2xl flex items-center justify-center backdrop-blur-sm">
               <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
@@ -1167,7 +1167,7 @@ export default function AdDashboard() {
               </svg>
             </div>
             <div>
-              <p className="text-white/80 text-sm font-medium">Total Registered as Sellers</p>
+              <p className="text-gray-700 text-sm font-medium">Total Registered as Sellers</p>
               <p className="text-4xl font-bold">{sellersCount}</p>
             </div>
           </div>
@@ -1178,7 +1178,7 @@ export default function AdDashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Row */}
         {/* Visitors Over Time Chart */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200/50 p-6 h-96">
+        {/* <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200/50 p-6 h-96">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-800">Visitors Over Time</h3>
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Overview</span>
@@ -1219,10 +1219,10 @@ export default function AdDashboard() {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Active Users Card */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200/50 p-6 h-96">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 h-96">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -1275,7 +1275,7 @@ export default function AdDashboard() {
         </div>
         {/* Bottom Row */}
         {/* Seller Subscribers Chart */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200/50 p-6 h-96">
+        {/* <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200/50 p-6 h-96">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-lg font-semibold text-gray-800">Seller Subscribers</h3>
             <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">Overview</span>
@@ -1317,10 +1317,10 @@ export default function AdDashboard() {
               </div>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Active Sellers Card */}
-        <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200/50 p-6 h-96">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-100 p-6 h-96">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center space-x-2">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
@@ -1392,7 +1392,7 @@ export default function AdDashboard() {
                 <button
                   onClick={() => setActiveTab('dashboard')}
                   className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'dashboard'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
+                    ? 'bg-[#22336c] text-white shadow-lg hover:shadow-xl'
                     : 'bg-white/80 backdrop-blur-md text-gray-700 hover:bg-gray-50 border border-gray-200/50'
                     }`}
                 >
@@ -1401,7 +1401,7 @@ export default function AdDashboard() {
                 <button
                   onClick={() => setActiveTab('users')}
                   className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'users'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
+                    ? 'bg-[#22336c] text-white shadow-lg hover:shadow-xl'
                     : 'bg-white/80 backdrop-blur-md text-gray-700 hover:bg-gray-50 border border-gray-200/50'
                     }`}
                 >
@@ -1410,7 +1410,7 @@ export default function AdDashboard() {
                 <button
                   onClick={() => setActiveTab('activity')}
                   className={`flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 ${activeTab === 'activity'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg'
+                    ? 'bg-[#22336c] text-white shadow-lg hover:shadow-xl'
                     : 'bg-white/80 backdrop-blur-md text-gray-700 hover:bg-gray-50 border border-gray-200/50'
                     }`}
                 >
@@ -1425,7 +1425,9 @@ export default function AdDashboard() {
                 <button
                   onClick={() => setActiveTab('dashboard')}
                   className={`w-full px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 ${activeTab === 'dashboard'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl'
+
+                    ? 'bg-[#22336c] text-white shadow-lg hover:shadow-xl'
+                    // ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl'
                     : 'bg-white/80 backdrop-blur-md text-gray-700 hover:bg-gray-50 border border-gray-200/50'
                     }`}
                 >
@@ -1434,7 +1436,8 @@ export default function AdDashboard() {
                 <button
                   onClick={() => setActiveTab('users')}
                   className={`w-full px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 ${activeTab === 'users'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl'
+                    ? 'bg-[#22336c] text-white shadow-lg hover:shadow-xl'
+                    // ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl'
                     : 'bg-white/80 backdrop-blur-md text-gray-700 hover:bg-gray-50 border border-gray-200/50'
                     }`}
                 >
@@ -1443,7 +1446,8 @@ export default function AdDashboard() {
                 <button
                   onClick={() => setActiveTab('activity')}
                   className={`w-full px-4 py-3 rounded-lg text-sm font-medium transition-all duration-200 transform hover:scale-105 ${activeTab === 'activity'
-                    ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl'
+                    ? 'bg-[#22336c] text-white shadow-lg hover:shadow-xl'
+                    // ? 'bg-gradient-to-r from-blue-600 to-indigo-600 text-white shadow-lg hover:shadow-xl'
                     : 'bg-white/80 backdrop-blur-md text-gray-700 hover:bg-gray-50 border border-gray-200/50'
                     }`}
                 >

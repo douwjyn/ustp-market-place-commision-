@@ -16,7 +16,7 @@ export default function AuthProvider({ children }) {
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
       navigate('/app/dashboard');
     } else {
-      navigate('/login');
+      navigate('/');
     }
   }
 

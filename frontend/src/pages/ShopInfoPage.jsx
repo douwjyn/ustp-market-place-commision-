@@ -419,7 +419,7 @@ export default function ShopInfoPage() {
                               )}
 
                               {/* Decline Button - only show if not delivered and not declined */}
-                              {order.status !== 'Delivered' || order.status !== 'Accepted' && order.status !== 'Declined' && (
+                              {order.status !== 'Delivered'&& (
                                 <button
                                   onClick={(e) => handleDeclineOrder(order.id)}
                                   className="px-4 py-2 text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md">

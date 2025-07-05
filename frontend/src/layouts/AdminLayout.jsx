@@ -30,7 +30,7 @@ export default function AdminLayout() {
     useEffect(() => {
         fetchNotifications()
     }, []);
-    if (!user) {
+    if (!sessionStorage.getItem('access_token')) {
         // Not logged in yet, or user info not loaded
         return <div className="flex items-center justify-center min-h-screen text-gray-500">Loading...</div>;
     }
@@ -50,7 +50,7 @@ export default function AdminLayout() {
 
     const logoutHandler = () => {
         sessionStorage.removeItem('access_token');
-        navigate('/login');
+        navigate('/');
     };
 
     const filteredNotifs = []
@@ -67,12 +67,12 @@ export default function AdminLayout() {
             <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 px-6 py-4 sticky top-0 z-50">
                 <div className="flex items-center justify-between max-w-7xl mx-auto">
                     {/* Left side - USTP Logo */}
-                    <div className="flex flex-col items-center">
+                    <div className="flex flex-row items-center gap-4">
                         <div className="relative w-16 h-16 mb-2">
                             <img
                                 src="/src/assets/logo.png"
                                 alt="USTP Logo"
-                                className="absolute inset-0 w-full h-full object-contain rounded-full border-4 border-orange-400"
+                                className="absolute inset-0 w-full h-full object-contain rounded-full "
                             />
                         </div>
                         <div className="text-center">
@@ -144,9 +144,9 @@ export default function AdminLayout() {
                                 onClick={() => setShowUserDropdown(!showUserDropdown)}
                                 className="flex items-center space-x-3 px-4 py-2 rounded-full bg-gray-50/50 hover:bg-gray-100/50 border border-gray-200/50 transition-all duration-200 backdrop-blur-sm"
                             >
-                                <span className="text-sm font-medium text-gray-700">User</span>
-                                <div className="w-8 h-8 bg-gradient-to-r from-gray-400 to-gray-500 rounded-full flex items-center justify-center">
-                                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <span className="text-sm font-medium text-gray-700">Admin</span>
+                                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
+                                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                                     </svg>
                                 </div>
