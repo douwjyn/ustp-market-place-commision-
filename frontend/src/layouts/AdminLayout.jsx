@@ -50,7 +50,8 @@ export default function AdminLayout() {
 
     const logoutHandler = () => {
         sessionStorage.removeItem('access_token');
-        navigate('/');
+        // navigate('/');
+        window.location.href = '/'
     };
 
     const filteredNotifs = []

@@ -49,7 +49,8 @@ const Navbar = () => {
 
     sessionStorage.removeItem('access_token');
     setIsLoggingOut(false)
-    navigate('/');
+    // navigate('/');
+    window.location.href = '/'
   };
 
   const handleLogout = (e) => {
