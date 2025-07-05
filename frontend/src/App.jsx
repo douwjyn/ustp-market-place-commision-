@@ -51,12 +51,13 @@ export default function App() {
           <CartProvider>
             <Toaster />
             <Routes>
-              <Route path='/' index element={<Welcome />} />
-              <Route path='/login' element={<Login />} />
-              <Route path='/create-account' element={<CreateAccount />} />
-              <Route path='/thank-you' element={<ThankYouPage />} />
-              <Route path='/forgot-password' element={<ForgotPassword />} />
-
+              <Route element={<GuestLayout />}>
+                <Route path='/' index element={<Welcome />} />
+                <Route path='/login' element={<Login />} />
+                <Route path='/create-account' element={<CreateAccount />} />
+                <Route path='/thank-you' element={<ThankYouPage />} />
+                <Route path='/forgot-password' element={<ForgotPassword />} />
+              </Route>
               <Route path='/admin'>
                 <Route path='login' element={<AddLogin />} />
                 <Route
