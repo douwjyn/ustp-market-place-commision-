@@ -13,7 +13,11 @@ export async function me() {
 
 export async function updateMe(data) {
   try {
-    const response = await api.post('/user', data);
+    const response = await api.post('/user', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
     return response.data;
   } catch (err) {
     console.error('Error updating user:', err);

@@ -49,7 +49,7 @@ export default function UserProvider({ children }) {
 
   return (
     <>
-      <UserContext.Provider value={{ userToken, user }}>
+      <UserContext.Provider value={{ userToken, user, setUser }}>
         {children}
       </UserContext.Provider>
     </>

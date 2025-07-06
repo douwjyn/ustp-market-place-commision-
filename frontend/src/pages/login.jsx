@@ -7,12 +7,13 @@ export default function Login() {
   const [access_token, setAccess_token] = useState(null);
   const [error, setError] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   async function handleLogin(e) {
     const formData = new FormData(e.target);
     const data = Object.fromEntries(formData.entries());
     console.log(data);
     try {
+      setIsLoggingIn(true)
       await api.post('/auth/login', data).then((response) => {
         console.log(response);
         setAccess_token(response.data.access_token);
@@ -28,6 +29,8 @@ export default function Login() {
       });
     } catch (err) {
       setError("Invalid login, please try again.");
+    } finally {
+      setIsLoggingIn(false)
     }
   }
 
@@ -154,9 +157,10 @@ export default function Login() {
             </Link> */}
             <button
               type='submit'
+              disabled={isLoggingIn}
               className='w-full mt-4 py-3 px-6 text-white font-semibold bg-[#183B4E] rounded-md hover:bg-[#DDA853] hover:text-black transition-all duration-300 hover:-translate-y-1'
             >
-              Sign In
+              {isLoggingIn ? `Signing in...` : `Sign in` }
             </button>
 
             <nav className='flex text-sm text-gray-600 justify-between'>

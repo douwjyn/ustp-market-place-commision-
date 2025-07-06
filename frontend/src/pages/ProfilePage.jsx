@@ -18,8 +18,11 @@ import { useDropzone } from 'react-dropzone';
 import ReactCrop from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
 import toast from 'react-hot-toast'
+import { updateMe } from '../service/User';
+import { useUser } from '../context/UserProvider';
 function ProfilePage() {
   const [firstName, setFirstName] = useState('');
+  const { setUser } = useUser();
   const [lastName, setLastName] = useState('');
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -153,7 +156,6 @@ function ProfilePage() {
   const onDrop = useCallback(
     (acceptedFiles) => {
       if (!isEditing) return;
-
       const file = acceptedFiles[0];
       if (file && file.size > 10 * 1024 * 1024) {
         alert('Image must be less than 10MB.');
@@ -162,8 +164,8 @@ function ProfilePage() {
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
-        setImage(file);
       };
+      setImage(file);
       reader.readAsDataURL(file);
     },
     [isEditing]
@@ -226,54 +228,81 @@ function ProfilePage() {
 
     if (previewUrl && completedCrop) {
       const croppedImage = await getCroppedImage();
-      formData.append('profile_image', croppedImage);
+      formData.append('image_path', croppedImage);
     } else if (image) {
-      formData.append('profile_image', image);
+      formData.append('image_path', image);
     }
 
     const token = sessionStorage.getItem('access_token');
+    try {
+      const res = await updateMe(formData);
+      toast.success('Profile updated successfully.');
 
-    axios
-      .post('http://localhost:8000/api/v1/user', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      .then((res) => {
-        const now = new Date();
-        setLastEditDate(now);
-        setIsEditing(false);
-        setCanEdit(false);
-        checkEditPermission(now);
+      const now = new Date();
+      setLastEditDate(now);
+      setIsEditing(false);
+      setCanEdit(false);
+      checkEditPermission(now);
 
-        if (res.data.user?.image_path) {
-          const imageUrl = res.data.user.image_path.startsWith('http')
-            ? res.data.user.image_path
-            : `http://localhost:8000/storage/${res.data.user.image_path}`;
-          setExistingImageUrl(imageUrl);
-        }
+      if (res.user?.image_path) {
+        const imageUrl = res.user.image_path.startsWith('http')
+          ? res.user.image_path
+          : `http://localhost:8000/storage/${res.user.image_path}`;
+        setExistingImageUrl(imageUrl);
+      }
 
-        // Reset image states
-        setImage(null);
-        setPreviewUrl(null);
-        setCompletedCrop(null);
-        toast.success('Profile updated successfully.', {
-          style: {
-            border: '1px solid #713200',
-            padding: '16px',
-            color: '#713200',
-          },
-          iconTheme: {
-            primary: '#713200',
-            secondary: '#FFFAEE',
-          },
-        });
-      })
-      .catch((err) => {
-        console.error('Failed to update profile:', err.response?.data);
-        alert('Failed to update profile.');
-      });
+      setUser(res.user);
+
+      setImage(null);
+      setPreviewUrl(null);
+      setCompletedCrop(null);
+    } catch (err) {
+      console.error('Failed to update profile:', err);
+      //     alert('Failed to update profile.');
+    }
+
+
+    // axios
+    //   .post('http://localhost:8000/api/v1/user', formData, {
+    //     headers: {
+    //       Authorization: `Bearer ${token}`,
+    //       'Content-Type': 'multipart/form-data',
+    //     },
+    //   })
+    //   .then((res) => {
+    //     const now = new Date();
+    //     setLastEditDate(now);
+    //     setIsEditing(false);
+    //     setCanEdit(false);
+    //     checkEditPermission(now);
+
+    //     if (res.data.user?.image_path) {
+    //       const imageUrl = res.data.user.image_path.startsWith('http')
+    //         ? res.data.user.image_path
+    //         : `http://localhost:8000/storage/${res.data.user.image_path}`;
+    //       setExistingImageUrl(imageUrl);
+    //     }
+
+    //     // Reset image states
+    //     setImage(null);
+    //     setPreviewUrl(null);
+    //     setCompletedCrop(null);
+    //     toast.success('Profile updated successfully.', {
+    //       style: {
+    //         border: '1px solid #713200',
+    //         padding: '16px',
+    //         color: '#713200',
+    //       },
+    //       iconTheme: {
+    //         primary: '#713200',
+    //         secondary: '#FFFAEE',
+    //       },
+    //     });
+    //   })
+    //   .catch((err) => {
+    //     console.error('Failed to update profile:', err.response?.data);
+    //     alert('Failed to update profile.');
+    //   });
   };
 
   return (

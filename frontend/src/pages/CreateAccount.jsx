@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import toast from 'react-hot-toast'
 import { User, Mail, Lock, Calendar, MapPin, Users, ArrowLeft, ArrowRight } from 'lucide-react';
 
 function CreateAccount() {
@@ -28,26 +29,27 @@ function CreateAccount() {
 
     if (step === 1) {
       if (password !== confirmpassword) {
-        alert('Passwords do not match!');
+        // alert('Passwords do not match!');
+        toast.error('Password does not match')
         return;
       }
       setStep(2);
     } else {
       try {
-        console.log({
-          username,
-          email,
-          password,
-          password_confirmation: confirmpassword,
-          first_name: firstName,
-          last_name: lastName,
-          birthdate,
-          address,
-          city,
-          state,
-          gender,
-          phone_number: phoneNumber,
-        });
+        // console.log({
+        //   username,
+        //   email,
+        //   password,
+        //   password_confirmation: confirmpassword,
+        //   first_name: firstName,
+        //   last_name: lastName,
+        //   birthdate,
+        //   address,
+        //   city,
+        //   state,
+        //   gender,
+        //   phone_number: phoneNumber,
+        // });
 
         // Send the registration request to Laravel
         const response = await axios.post(
@@ -70,13 +72,10 @@ function CreateAccount() {
         console.log(response.data);
         navigate('/thank-you');
       } catch (error) {
-        if (error.response) {
-          console.error('Registration failed:', error.response.data);
-        } else {
-          console.error('Registration error:', error.message);
-        }
-        alert(
-          'Registration failed. Please check the console for more details.'
+        // console.log(error)
+        toast.error(
+          `${error.response.data.message}`
+          // 'Registration failed. Please check the console for more details.'
         );
       }
     }
