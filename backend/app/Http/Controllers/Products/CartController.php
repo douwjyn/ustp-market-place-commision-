@@ -80,7 +80,7 @@ class CartController extends Controller
     public function getCart()
     {
         $user = JWTAuth::user();
-        $cartItems = Cart::with(['product.images', 'product.categories', 'product.sizes'])->where('user_id', $user->id)->get();
+        $cartItems = Cart::with(['product.images', 'product.categories', 'product.sizes', 'product.shop'])->where('user_id', $user->id)->get();
         return response()->json($cartItems);
     }
 

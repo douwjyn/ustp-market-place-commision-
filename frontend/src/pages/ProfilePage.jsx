@@ -20,6 +20,7 @@ import 'react-image-crop/dist/ReactCrop.css';
 import toast from 'react-hot-toast'
 import { updateMe } from '../service/User';
 import { useUser } from '../context/UserProvider';
+
 function ProfilePage() {
   const [firstName, setFirstName] = useState('');
   const { setUser } = useUser();
@@ -28,7 +29,7 @@ function ProfilePage() {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [gender, setGender] = useState('');
   const [dateOfBirth, setDateOfBirth] = useState('');
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState(null); // This will store the actual File object
   const [existingImageUrl, setExistingImageUrl] = useState('');
   const [previewUrl, setPreviewUrl] = useState(null);
   const [crop, setCrop] = useState({ aspect: 1 / 1 });
@@ -156,16 +157,33 @@ function ProfilePage() {
   const onDrop = useCallback(
     (acceptedFiles) => {
       if (!isEditing) return;
+      
       const file = acceptedFiles[0];
-      if (file && file.size > 10 * 1024 * 1024) {
+      if (!file) return;
+      
+      // Ensure we have a proper File object
+      if (!(file instanceof File)) {
+        console.error('Selected item is not a valid file');
+        return;
+      }
+      
+      if (file.size > 10 * 1024 * 1024) {
         alert('Image must be less than 10MB.');
         return;
       }
+
+      // Reset previous crop settings
+      setCompletedCrop(null);
+      setCrop({ aspect: 1 / 1 });
+      
+      // Store the actual file object
+      setImage(file);
+      
+      // Create preview URL for display
       const reader = new FileReader();
       reader.onloadend = () => {
         setPreviewUrl(reader.result);
       };
-      setImage(file);
       reader.readAsDataURL(file);
     },
     [isEditing]
@@ -173,7 +191,9 @@ function ProfilePage() {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
-    accept: 'image/*',
+    accept: {
+      'image/*': ['.jpeg', '.jpg', '.png', '.gif', '.bmp', '.webp']
+    },
     maxSize: 10 * 1024 * 1024,
     disabled: !isEditing,
   });
@@ -183,58 +203,94 @@ function ProfilePage() {
   }, []);
 
   const getCroppedImage = () => {
-    if (!completedCrop || !imgRef) return;
-
-    const canvas = document.createElement('canvas');
-    const scaleX = imgRef.naturalWidth / imgRef.width;
-    const scaleY = imgRef.naturalHeight / imgRef.height;
-
-    canvas.width = completedCrop.width;
-    canvas.height = completedCrop.height;
-    const ctx = canvas.getContext('2d');
-
-    ctx.drawImage(
-      imgRef,
-      completedCrop.x * scaleX,
-      completedCrop.y * scaleY,
-      completedCrop.width * scaleX,
-      completedCrop.height * scaleY,
-      0,
-      0,
-      completedCrop.width,
-      completedCrop.height
-    );
-
     return new Promise((resolve) => {
+      if (!completedCrop || !imgRef) {
+        console.log('No crop or image reference available');
+        resolve(null);
+        return;
+      }
+
+      const canvas = document.createElement('canvas');
+      const scaleX = imgRef.naturalWidth / imgRef.width;
+      const scaleY = imgRef.naturalHeight / imgRef.height;
+
+      canvas.width = completedCrop.width;
+      canvas.height = completedCrop.height;
+      const ctx = canvas.getContext('2d');
+
+      ctx.drawImage(
+        imgRef,
+        completedCrop.x * scaleX,
+        completedCrop.y * scaleY,
+        completedCrop.width * scaleX,
+        completedCrop.height * scaleY,
+        0,
+        0,
+        completedCrop.width,
+        completedCrop.height
+      );
+
       canvas.toBlob(
         (blob) => {
-          const file = new File([blob], 'cropped.jpg', { type: 'image/jpeg' });
-          resolve(file);
+          if (blob) {
+            // Create a proper File object with a unique name
+            const fileName = `cropped-profile-${Date.now()}.jpg`;
+            const file = new File([blob], fileName, { 
+              type: 'image/jpeg',
+              lastModified: Date.now()
+            });
+            console.log('Created cropped file:', file);
+            resolve(file);
+          } else {
+            console.log('Failed to create blob from canvas');
+            resolve(null);
+          }
         },
         'image/jpeg',
-        1
+        0.9 // Quality setting
       );
     });
   };
 
   const handleSave = async () => {
-    const formData = new FormData();
-    formData.append('first_name', firstName);
-    formData.append('last_name', lastName);
-    formData.append('email', email);
-    formData.append('phone_number', phoneNumber);
-    formData.append('gender', gender);
-    formData.append('dob', dateOfBirth);
-
-    if (previewUrl && completedCrop) {
-      const croppedImage = await getCroppedImage();
-      formData.append('image_path', croppedImage);
-    } else if (image) {
-      formData.append('image_path', image);
-    }
-
-    const token = sessionStorage.getItem('access_token');
     try {
+      const formData = new FormData();
+      formData.append('first_name', firstName);
+      formData.append('last_name', lastName);
+      formData.append('email', email);
+      formData.append('phone_number', phoneNumber);
+      formData.append('gender', gender);
+      formData.append('dob', dateOfBirth);
+
+      // Handle image upload - ensure we're sending a proper File object
+      if (image && image instanceof File) {
+        if (completedCrop && previewUrl && imgRef) {
+          // Use cropped image if crop is available
+          const croppedImage = await getCroppedImage();
+          if (croppedImage && croppedImage instanceof File) {
+            console.log('Appending cropped image:', croppedImage);
+            formData.append('image_path', croppedImage, croppedImage.name);
+          } else {
+            console.log('Appending original image (crop failed):', image);
+            formData.append('image_path', image, image.name);
+          }
+        } else {
+          // Use original image file if no crop
+          console.log('Appending original image:', image);
+          formData.append('image_path', image, image.name);
+        }
+      }
+
+      // Debug: Log FormData contents
+      console.log('FormData contents:');
+      for (let [key, value] of formData.entries()) {
+        if (key === 'image_path') {
+          console.log(`${key}:`, value, 'Type:', typeof value, 'Is File:', value instanceof File);
+        } else {
+          console.log(`${key}:`, value);
+        }
+      }
+
       const res = await updateMe(formData);
       toast.success('Profile updated successfully.');
 
@@ -253,56 +309,14 @@ function ProfilePage() {
 
       setUser(res.user);
 
+      // Reset image states
       setImage(null);
       setPreviewUrl(null);
       setCompletedCrop(null);
     } catch (err) {
       console.error('Failed to update profile:', err);
-      //     alert('Failed to update profile.');
+      toast.error('Failed to update profile.');
     }
-
-
-    // axios
-    //   .post('http://localhost:8000/api/v1/user', formData, {
-    //     headers: {
-    //       Authorization: `Bearer ${token}`,
-    //       'Content-Type': 'multipart/form-data',
-    //     },
-    //   })
-    //   .then((res) => {
-    //     const now = new Date();
-    //     setLastEditDate(now);
-    //     setIsEditing(false);
-    //     setCanEdit(false);
-    //     checkEditPermission(now);
-
-    //     if (res.data.user?.image_path) {
-    //       const imageUrl = res.data.user.image_path.startsWith('http')
-    //         ? res.data.user.image_path
-    //         : `http://localhost:8000/storage/${res.data.user.image_path}`;
-    //       setExistingImageUrl(imageUrl);
-    //     }
-
-    //     // Reset image states
-    //     setImage(null);
-    //     setPreviewUrl(null);
-    //     setCompletedCrop(null);
-    //     toast.success('Profile updated successfully.', {
-    //       style: {
-    //         border: '1px solid #713200',
-    //         padding: '16px',
-    //         color: '#713200',
-    //       },
-    //       iconTheme: {
-    //         primary: '#713200',
-    //         secondary: '#FFFAEE',
-    //       },
-    //     });
-    //   })
-    //   .catch((err) => {
-    //     console.error('Failed to update profile:', err.response?.data);
-    //     alert('Failed to update profile.');
-    //   });
   };
 
   return (
@@ -433,8 +447,6 @@ function ProfilePage() {
                   className='w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-gray-600 cursor-not-allowed'
                 />
               </div>
-
-
             </div>
 
             {/* Additional Information */}
@@ -458,25 +470,6 @@ function ProfilePage() {
                     }`}
                 />
               </div>
-              {/* <div className='space-y-2'>
-                <div className='flex items-center gap-2'>
-                  <Settings size={18} className='text-[#183B4E]' />
-                  <label className='text-sm font-semibold text-gray-900'>
-                    Gender
-                  </label>
-                </div>
-                <input
-                  type='text'
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                  placeholder='Enter your gender'
-                  disabled={!isEditing}
-                  className={`w-full px-4 py-3 border rounded-xl transition-all duration-200 ${!isEditing
-                      ? 'bg-gray-50 border-gray-200 text-gray-600 cursor-not-allowed'
-                      : 'bg-white border-gray-300 text-gray-900 focus:border-[#183B4E] focus:ring-2 focus:ring-[#183B4E]/20 focus:outline-none'
-                    }`}
-                /> */}
-              {/* </div> */}
 
               <div className='space-y-2'>
                 <div className='flex items-center gap-2'>
@@ -517,7 +510,7 @@ function ProfilePage() {
                         className='w-full h-full object-cover'
                       />
                     ) : (
-                      <div className='w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center'>
+                      <div className='hw-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center'>
                         <User size={48} className='text-gray-400' />
                       </div>
                     )}
@@ -559,7 +552,7 @@ function ProfilePage() {
             </div>
 
             {/* Image Cropping Section */}
-            {previewUrl && isEditing && completedCrop && (
+            {previewUrl && isEditing && (
               <div className='space-y-4'>
                 <div className='flex items-center gap-2'>
                   <Settings size={18} className='text-[#183B4E]' />

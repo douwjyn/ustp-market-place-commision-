@@ -896,7 +896,7 @@ export default function Checkout() {
                 <div className='mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg'>
                   <h4 className='font-medium text-blue-900 mb-2'>GCash Payment Instructions:</h4>
                   <ol className='text-sm text-blue-800 space-y-1'>
-                    <li>1. Send payment to: <strong>09XX-XXX-XXXX</strong></li>
+                    <li>1. Send payment to: <strong>{}</strong></li>
                     <li>2. Amount: <strong>₱{finalTotal.toFixed(2)}</strong></li>
                     <li>3. Take a screenshot of your payment receipt</li>
                     <li>4. Upload the receipt when placing your order</li>

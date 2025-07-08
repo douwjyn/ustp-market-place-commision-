@@ -14,6 +14,7 @@ import { useCart } from '../context/CartContext';
 export default function ShoppingCart() {
   const [cartItems, setCartItems] = React.useState([]);
   const [selectedItems, setSelectedItems] = React.useState(new Set());
+  const [errorMessage, setErrorMessage] = React.useState('');
   const navigate = useNavigate();
   const {
     removeFromCart,
@@ -21,6 +22,7 @@ export default function ShoppingCart() {
     getCartTotal,
     getCartItemsCount,
   } = useCart();
+
   const fetchCartItems = async () => {
     const response = await fetch('http://localhost:8000/api/v1/cart', {
       method: 'GET',
@@ -31,15 +33,24 @@ export default function ShoppingCart() {
     });
     if (response.ok) {
       const data = await response.json();
-
-
-      console.log('ddd', data)
       setCartItems(data);
     }
   }
+
   useEffect(() => {
     fetchCartItems();
   }, []);
+
+  // Check if all selected items are from the same store
+  const checkSameStore = () => {
+    if (selectedItems.size === 0) return false;
+    
+    const selectedItemsData = cartItems.filter(item => selectedItems.has(item.id));
+    if (selectedItemsData.length === 0) return false;
+    
+    const firstStoreId = selectedItemsData[0].product.shop.id;
+    return selectedItemsData.every(item => item.product.shop.id === firstStoreId);
+  };
 
   // Handle individual item selection
   const handleItemSelect = (itemId) => {
@@ -50,6 +61,7 @@ export default function ShoppingCart() {
       newSelectedItems.add(itemId);
     }
     setSelectedItems(newSelectedItems);
+    setErrorMessage(''); // Clear error when selection changes
   };
 
   // Handle select all functionality
@@ -58,8 +70,16 @@ export default function ShoppingCart() {
       // If all items are selected, deselect all
       setSelectedItems(new Set());
     } else {
-      // Otherwise, select all items
-      setSelectedItems(new Set(cartItems.map(item => item.id)));
+      // Check if all items are from the same store
+      const firstStoreId = cartItems[0].product.shop.id;
+      const allSameStore = cartItems.every(item => item.product.shop.id === firstStoreId);
+      
+      if (allSameStore) {
+        // Select all items if they're from the same store
+        setSelectedItems(new Set(cartItems.map(item => item.id)));
+      } else {
+        setErrorMessage('Cannot select all items - they are from different stores');
+      }
     }
   };
 
@@ -68,9 +88,10 @@ export default function ShoppingCart() {
     return cartItems
       .filter(item => selectedItems.has(item.id))
       .reduce((total, item) => {
-        return total + Number(item.price || 0);
+        return total + (Number(item.price) * item.quantity);
       }, 0);
   };
+
   const getSelectedItemsCount = () => {
     return cartItems
       .filter(item => selectedItems.has(item.id))
@@ -96,18 +117,14 @@ export default function ShoppingCart() {
         },
       });
       if (response.ok) {
-        // Remove item from local state
         setCartItems((prevItems) =>
           prevItems.filter((item) => item.id !== cart_id)
         );
-        // Remove from selected items if it was selected
         setSelectedItems(prev => {
           const newSet = new Set(prev);
           newSet.delete(cart_id);
           return newSet;
         });
-      } else {
-        console.error('Failed to remove item from cart');
       }
     } catch (error) {
       console.error('Error removing item from cart:', error);
@@ -125,16 +142,8 @@ export default function ShoppingCart() {
         },
       });
       if (response.ok) {
-        // Update item quantity in local state
-        // setCartItems((prevItems) =>
-        //   prevItems.map((item) =>
-        //     item.id === cart_id ? { ...item, quantity: quantity + 1 } : item
-        //   )
-        // );
-        setCartItems([])
-        fetchCartItems()
-      } else {
-        console.error('Failed to update item quantity');
+        setCartItems([]);
+        fetchCartItems();
       }
     } catch (error) {
       console.error('Error updating item quantity:', error);
@@ -152,30 +161,22 @@ export default function ShoppingCart() {
         },
       });
       if (response.ok) {
-        // Update item quantity in local state
-        setCartItems((prevItems) =>
-          prevItems.map((item) =>
-            item.id === cart_id ? { ...item, quantity: quantity - 1 } : item
-          )
-        );
-      } else {
-        console.error('Failed to update item quantity');
+        setCartItems([]);
+        fetchCartItems();
       }
-
-      setCartItems([])
-      fetchCartItems()
     } catch (error) {
       console.error('Error updating item quantity:', error);
     }
   };
 
   const handleCheckout = () => {
-    // Get selected items data to pass to checkout
+    if (!checkSameStore()) {
+      setErrorMessage('Please select items from the same store to checkout');
+      return;
+    }
+
     const selectedCartItems = cartItems.filter(item => selectedItems.has(item.id));
-
-    // You can store selected items in sessionStorage or pass them via navigation state
     sessionStorage.setItem('selectedCartItems', JSON.stringify(selectedCartItems));
-
     navigate('/app/checkout');
   };
 
@@ -200,10 +201,11 @@ export default function ShoppingCart() {
     return cartItems.map((item) => (
       <article
         key={item.id}
-        className={`bg-white border rounded-xl p-4 md:p-6 mb-4 transition-all duration-200 ${selectedItems.has(item.id)
-          ? 'border-[#183B4E] ring-2 ring-[#183B4E]/20 bg-blue-50/30'
-          : 'border-gray-100 hover:border-gray-200'
-          }`}
+        className={`bg-white border rounded-xl p-4 md:p-6 mb-4 transition-all duration-200 ${
+          selectedItems.has(item.id)
+            ? 'border-[#183B4E] ring-2 ring-[#183B4E]/20 bg-blue-50/30'
+            : 'border-gray-100 hover:border-gray-200'
+        }`}
       >
         <div className='flex items-start gap-4'>
           <input
@@ -220,9 +222,14 @@ export default function ShoppingCart() {
             />
           </div>
           <div className='flex-grow min-w-0'>
-            <h3 className='text-gray-900 font-medium text-sm md:text-base line-clamp-2'>
-              {item.name}
-            </h3>
+            <div className='flex justify-between items-start'>
+              <h3 className='text-gray-900 font-medium text-sm md:text-base line-clamp-2'>
+                {item.name}
+              </h3>
+              <span className='text-xs bg-gray-100 px-2 py-1 rounded'>
+                {item.product.shop.name}
+              </span>
+            </div>
             <div className='flex flex-col gap-1 mt-2'>
               {item.selected_size && (
                 <span className='text-gray-500 text-xs'>
@@ -242,8 +249,6 @@ export default function ShoppingCart() {
             </div>
             <div className='flex flex-col md:flex-row md:justify-between md:items-center mt-4 gap-3'>
               <div className='text-[#183B4E] font-bold text-lg'>
-                {/* ₱{(item.price * item.quantity).toLocaleString()} */}
-                {/* ₱{parseFloat(item.price || 0).toLocaleString()} */}
                 ₱{(item.price / item.quantity).toFixed(2)}
               </div>
               <div className='flex items-center justify-between md:justify-end gap-4'>
@@ -270,7 +275,7 @@ export default function ShoppingCart() {
                 </div>
                 <button
                   onClick={() => handleRemoveFromCart(item.id)}
-                  className='flex  items-center gap-1 text-red-500 hover:text-red-600 transition-colors'
+                  className='flex items-center gap-1 text-red-500 hover:text-red-600 transition-colors'
                 >
                   <Trash2 size={16} />
                   <span className='text-sm'>Remove</span>
@@ -282,6 +287,9 @@ export default function ShoppingCart() {
       </article>
     ));
   };
+
+  const isSameStore = checkSameStore();
+  const checkoutDisabled = selectedItems.size === 0 || !isSameStore;
 
   return (
     <main className='flex flex-col min-h-screen w-screen bg-gradient-to-br from-[#F8FAFC] to-[#E2E8F0] font-sans'>
@@ -333,6 +341,12 @@ export default function ShoppingCart() {
                   )}
                 </div>
 
+                {errorMessage && (
+                  <div className='mb-4 p-3 bg-red-50 text-red-600 rounded-lg text-sm'>
+                    {errorMessage}
+                  </div>
+                )}
+
                 <div className='space-y-4'>{renderCartItems()}</div>
               </div>
             </div>
@@ -362,17 +376,22 @@ export default function ShoppingCart() {
                         Total
                       </span>
                       <span className='text-xl font-bold text-[#183B4E]'>
-                        {/* ₱{Number(item.price).toFixed(2)} */}
-                        ₱{totalPrice.toLocaleString()}
+                        ₱{(totalPrice + 150).toLocaleString()}
                       </span>
                     </div>
                   </div>
                 </div>
 
+                {!isSameStore && selectedItems.size > 0 && (
+                  <div className='mb-4 text-sm text-red-500'>
+                    Please select items from the same store to checkout
+                  </div>
+                )}
+
                 <button
                   className='w-full flex items-center justify-center gap-2 py-3 bg-[#183B4E] text-white font-semibold rounded-xl hover:bg-[#DDA853] hover:text-black transition-all duration-300 hover:-translate-y-1 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0'
                   onClick={handleCheckout}
-                  disabled={selectedItems.size === 0}
+                  disabled={checkoutDisabled}
                 >
                   <CreditCard size={20} />
                   Proceed to Checkout ({selectedItems.size} items)
