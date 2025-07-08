@@ -320,14 +320,14 @@ const Navbar = () => {
                       >
                         Profile Information
                       </button>
-                      <button
+                      {/* <button
                         onClick={() =>
                           handleNavigation('/app/profile/address')
                         }
                         className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors'
                       >
                         My Address
-                      </button>
+                      </button> */}
                       <button
                         onClick={() => handleNavigation('/app/profile/purchase-history')}
                         className='w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors'

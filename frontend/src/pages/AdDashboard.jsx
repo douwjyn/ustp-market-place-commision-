@@ -1170,7 +1170,7 @@ export default function AdDashboard() {
             </div>
             <div>
               <p className="text-gray-700 text-sm font-medium">Total Registered as Sellers</p>
-              <p className="text-4xl font-bold">{sellersCount}</p>
+              <p className="text-4xl font-bold">{sellersCount ? sellersCount : 0}</p>
             </div>
           </div>
         </div>

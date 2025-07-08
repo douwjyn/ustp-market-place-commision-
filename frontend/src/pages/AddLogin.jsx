@@ -135,12 +135,6 @@ const AdLogin = () => {
 
           {/* Links */}
           <div className="mt-4 flex justify-between text-sm">
-            <Link 
-              to="/admin/create-account" 
-              className="text-[#22336c] hover:text-[#DDA853] transition-colors"
-            >
-              Create account
-            </Link>
             <a 
               href="#" 
               className="text-gray-500 hover:text-[#DDA853] transition-colors"
