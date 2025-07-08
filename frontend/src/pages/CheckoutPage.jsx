@@ -33,6 +33,7 @@ export default function Checkout() {
   const [receiptPreview, setReceiptPreview] = useState(null);
   const { user, token } = useContext(UserContext);
   const [cartItems, setCartItems] = useState([]);
+  const [phoneNumber, setPhoneNumber] = useState([]);
   const [customerInfo, setCustomerInfo] = useState({
     fullName: '',
     email: '',
@@ -56,6 +57,7 @@ export default function Checkout() {
           const parsedItems = JSON.parse(selectedItems);
           console.log('Loaded selected items from sessionStorage:', parsedItems);
           setCartItems(parsedItems);
+          setPhoneNumber(parsedItems[0].product.shop.phone)
         } else {
           // Fallback: fetch all cart items if no selection
           fetchAllCartItems();
@@ -79,6 +81,7 @@ export default function Checkout() {
           const data = await response.json();
           console.log('Fetched all cart items:', data);
           setCartItems(data);
+          setPhoneNumber(data.product.shop.phone)
         }
       } catch (error) {
         console.error('Error fetching cart items:', error);
@@ -896,7 +899,7 @@ export default function Checkout() {
                 <div className='mt-4 p-4 bg-blue-50 border border-blue-200 rounded-lg'>
                   <h4 className='font-medium text-blue-900 mb-2'>GCash Payment Instructions:</h4>
                   <ol className='text-sm text-blue-800 space-y-1'>
-                    <li>1. Send payment to: <strong>{}</strong></li>
+                    <li>1. Send payment to: <strong>{phoneNumber}</strong></li>
                     <li>2. Amount: <strong>₱{finalTotal.toFixed(2)}</strong></li>
                     <li>3. Take a screenshot of your payment receipt</li>
                     <li>4. Upload the receipt when placing your order</li>
