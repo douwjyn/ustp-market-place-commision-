@@ -46,7 +46,7 @@ export default function ProductGrid() {
   const categoryOptions = [
     'Clothes',
     'Foot Wear',
-    'Food',
+    'Foods',
     'End devices',
     'Jewelry',
   ];
