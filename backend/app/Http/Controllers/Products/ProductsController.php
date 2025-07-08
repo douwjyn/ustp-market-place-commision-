@@ -232,7 +232,7 @@ class ProductsController
         \App\Models\AdminNotification::create([
             'type' => 'order',
             'title' => 'Order Cancelled',
-            'message' => $purchase->order_id . " has been cancelled by the customer.",
+            'message' => "#" . $purchase->order_id . " has been cancelled by the customer.",
             'is_read' => false,
             'priority' => 'low',
             'action_required' => false
@@ -561,7 +561,7 @@ class ProductsController
 
         $purchases = [];
         $totalAmount = 0;
-        $orderId = \Illuminate\Support\Str::random(8);
+        $orderId = str_pad(random_int(0, 99999999), 8, '0', STR_PAD_LEFT);
 
         foreach ($request->cart_items as $item) {
             $product = Product::find($item['product_id']);
@@ -618,6 +618,26 @@ class ProductsController
                 'user_id' => $purchase->shop->user->id,
                 'for' => 'seller'
             ]);
+
+            \App\Models\AdminNotification::create([
+                'type' => 'order',
+                'title' => 'Order Placed',
+                'message' => 'Order placed by ' . $user->email . ', order ID: ' . $purchase->order_id,
+                'is_read' => false,
+                'priority' => 'low',
+                'action_required' => false
+            ]);
+
+            \App\Models\Activity::create([
+                'type' => 'order',
+                'user_id' => $user->id,
+                'description' => 'Order placed by ' . $user->email . ', order ID: ' . $purchase->order_id,
+                // 'description' => 'Order #' . $purchase->order_id . ' has been placed as ' . strtolower($status) . ' by ' . $user->email,
+                // 'description' => 'Order #' . $purchase->order_id . ' placed.',
+                'purchase_id' => $purchase->id,
+                'status' => 'completed'
+            ]);
+
             $purchases[] = $purchase;
 
             $product->stock = $product->stock - $item['quantity'];

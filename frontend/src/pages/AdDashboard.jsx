@@ -1013,7 +1013,9 @@ export default function AdDashboard() {
   const [sellersCount, setSellersCount] = useState([]);
   const [users, setUsers] = useState([]);
 
-
+  useEffect(() => {
+    fetchUsersCount()
+  }, [])
   const fetchUsersCount = async () => {
     const response = await axios.get('http://localhost:8000/api/v1/user/fetch-users', {
       headers: {
@@ -1154,7 +1156,7 @@ export default function AdDashboard() {
             </div>
             <div>
               <p className="text-white/80 text-sm font-medium">Total Users</p>
-              <p className="text-4xl font-bold">{usersCount}</p>
+              <p className="text-4xl font-bold text-white">{usersCount ? usersCount : '0'}</p>
             </div>
           </div>
         </div>

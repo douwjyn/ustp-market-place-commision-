@@ -11,14 +11,14 @@ class NotificationController extends Controller
     public function admin_notifications()
     {
         // $notifications = Notification::where('for', 'admin')->get();
-        $notifications = Activity::limit(3)->get();
+        $notifications = Activity::orderBy('created_at', 'desc')->limit(3)->latest()->get();
         return response()->json($notifications);
     }
 
 
     public function user_notifications()
     {
-        $notifications = Notification::where('for', 'user')->get();
+        $notifications = Notification::orderBy('created_at', 'desc')->where('for', 'user')->get();
         return response()->json($notifications);
     }
 
