@@ -409,9 +409,6 @@ export default function VisitShop() {
                                                     </div>
 
                                                     <div className="flex gap-2">
-                                                        <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
-                                                            <Heart size={18} />
-                                                        </button>
                                                         <button className="p-2 text-gray-400 hover:text-blue-500 transition-colors">
                                                             <ShoppingCart size={18} />
                                                         </button>
