@@ -17,7 +17,7 @@ class CartController extends Controller
         $request->validate([
             'product_id' => 'required|exists:products,id',
             'quantity' => 'required|integer|min:1',
-            'selected_size' => 'required|in:XS,S,M,L,XL,XXL',
+            'selected_size' => 'required|in:XS,S,M,L,XL,XXL,N/A',
         ]);
         $user = JWTAuth::user();
 

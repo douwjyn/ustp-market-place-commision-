@@ -86,9 +86,9 @@ class OwnProductsController
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
             'discount' => 'required|integer|min:0|max:100',
-            'categories' => 'nullable|array',
+            'categories' => 'required|array',
             'categories.*' => 'exists:categories,name', // assuming categories are IDs
-            'sizes' => 'nullable|array',
+            'sizes' => 'required|array',
             'sizes.*' => 'string',
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
