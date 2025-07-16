@@ -28,16 +28,7 @@ const ForgotPassword = () => {
     }
 
     try {
-      const response = await axios.post(
-        `${process.env.REACT_APP_API_URL || "http://localhost:8000"}/api/forgot-password`,
-        { email: email.trim().toLowerCase() },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          timeout: 10000,
-        }
-      );
+      const response = await axios.post("http://localhost:8000/api/v1/forgot-password", { email });
 
       if (response.data && response.data.message) {
         setSuccessMessage(response.data.message);

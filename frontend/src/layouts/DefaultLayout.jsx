@@ -78,6 +78,21 @@ function DefaultLayout() {
 
   }, []);
 
+  async function authenticated() {
+    const token = sessionStorage.getItem('access_token');
+    if (token) {
+      setUserToken(token);
+      api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+      navigate('/app/dashboard');
+    } else {
+      navigate('/');
+    }
+  }
+
+  useEffect(() => {
+    authenticated();
+  }, []);
+
   if (!sessionStorage.getItem('access_token')) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }

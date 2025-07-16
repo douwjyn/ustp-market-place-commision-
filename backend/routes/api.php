@@ -13,10 +13,16 @@ use App\Http\Controllers\Products\OwnProductsController;
 use App\Http\Controllers\Store\StoreController;
 use App\Http\Controllers\Store\OwnStoreController;
 use App\Http\Controllers\Products\CartController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+use App\Http\Controllers\Auth\ResetPasswordController;
+
 
 
 Route::prefix('v1')->group(function () {
-  
+
+  Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink']);
+  Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
+
   // Auth routes
   Route::prefix('auth')->group(function () {
     Route::post('/login', [AuthController::class, 'login']);
@@ -26,8 +32,8 @@ Route::prefix('v1')->group(function () {
   Route::post('/admin/register', [AdminController::class, 'register']);
   Route::post('/admin/login', [AdminController::class, 'login']);
 
-Route::middleware([AuthProvider::class])->group(function () {
-  // Admin routes
+  Route::middleware([AuthProvider::class])->group(function () {
+    // Admin routes
     Route::get('/admin/activities', [ActivityController::class, 'index']);
     Route::put('/admin/product/{id}/accepted/{user_id}', [AdminController::class, 'accept_product']);
     Route::put('/admin/change_password', [AdminController::class, 'change_password']);
@@ -39,7 +45,7 @@ Route::middleware([AuthProvider::class])->group(function () {
 
     // User routes  
     Route::prefix('user')->group(function () {
-    Route::post('/status', [UserController::class, 'update_status']);
+      Route::post('/status', [UserController::class, 'update_status']);
       // Route::get('/users', [UserController::class, 'users']);
       Route::get('/', [UserController::class, 'me']);
       Route::get('/fetch-users', [UserController::class, 'fetch_users']);

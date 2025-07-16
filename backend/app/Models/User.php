@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable implements JWTSubject
 
 {
-    use SoftDeletes, HasFactory;
+    use SoftDeletes, HasFactory, Notifiable;
 
     protected $fillable = [
         'first_name',

@@ -27,15 +27,21 @@ return new class extends Migration
             $table->date('birthdate');
             $table->string('image_path')->nullable();
             $table->softDeletes();
+             $table->rememberToken();
             $table->timestamps();
+        });
+        Schema::create('password_reset_tokens', function (Blueprint $table) {
+            $table->string('email')->primary();
+            $table->string('token');
+            $table->timestamp('created_at')->nullable();
         });
     }
 
     /**
      * Reverse the migrations.
      */
-    public function down(): void
-    {
-        Schema::dropIfExists('users');
-    }
+    // public function down(): void
+    // {
+    //     Schema::dropIfExists('users');
+    // }
 };

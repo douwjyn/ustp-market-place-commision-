@@ -136,7 +136,7 @@ const AdLogin = () => {
           {/* Links */}
           <div className="mt-4 flex justify-between text-sm">
             <a 
-              href="#" 
+              href="/forgot-password" 
               className="text-gray-500 hover:text-[#DDA853] transition-colors"
             >
               Forgot password?

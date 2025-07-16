@@ -39,6 +39,7 @@ import VisitShop from './pages/VisitShop.jsx';
 import { useEffect } from 'react';
 import axios from 'axios'
 import unloadHandler from './components/UnloadHandler.jsx';
+import ResetPassword from './pages/ResetPassword.jsx';
 export default function App() {
 
 
@@ -51,13 +52,12 @@ export default function App() {
           <CartProvider>
             <Toaster />
             <Routes>
-              <Route element={<GuestLayout />}>
                 <Route path='/' index element={<Welcome />} />
                 <Route path='/login' element={<Login />} />
                 <Route path='/create-account' element={<CreateAccount />} />
                 <Route path='/thank-you' element={<ThankYouPage />} />
                 <Route path='/forgot-password' element={<ForgotPassword />} />
-              </Route>
+                <Route path='/reset-password/:token' element={<ResetPassword />} />
               <Route path='/admin'>
                 <Route path='login' element={<AddLogin />} />
                 <Route
