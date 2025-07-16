@@ -146,7 +146,7 @@ const Navbar = () => {
               src={logo}
               alt='Logo'
               className='h-8 md:h-12 w-auto cursor-pointer transition-transform hover:scale-105'
-              onClick={() => navigate('/app/profile/')}
+              onClick={() => navigate('/app/dashboard')}
             />
 
             <div className='hidden md:flex items-center gap-6'>
