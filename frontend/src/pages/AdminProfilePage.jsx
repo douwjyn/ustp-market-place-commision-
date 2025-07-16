@@ -154,13 +154,10 @@ export default function AdminAccountPage() {
         formData.append('profile_image', profileImage);
       }
 
-      for (let [key, value] of formData.entries()) {
-        console.log(key, value);
-      }
-
+    
       const response = await axios.post('http://localhost:8000/api/v1/admin/profile', formData, {
         headers: {
-          'Content-Type': 'multipart/form-daxta',
+          'Content-Type': 'multipart/form-data',
           'Authorization': `Bearer ${sessionStorage.getItem('access_token')}`
         },
       });
@@ -259,7 +256,7 @@ export default function AdminAccountPage() {
                     <div className="w-72 h-96 border-2 border-dashed border-gray-300 rounded-3xl flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100/50 backdrop-blur-sm relative overflow-hidden">
                       {imagePreview ? (
                         <img
-                          src={`http://localhost:8000/storage/${imagePreview}`}
+                          src={imagePreview.startsWith('profile_images/') ? `http://localhost:8000/storage/${imagePreview}` : imagePreview}
                           alt="Profile Preview"
                           className="w-full h-full object-cover rounded-3xl"
                         />
