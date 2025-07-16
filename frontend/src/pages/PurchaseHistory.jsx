@@ -312,7 +312,7 @@ export default function PurchaseHistory() {
           </div>
 
           {/* Pagination */}
-          <footer className='flex justify-between items-center p-8 bg-gradient-to-r from-gray-50/80 to-white/50 backdrop-blur-sm border-t border-white/30'>
+          {/* <footer className='flex justify-between items-center p-8 bg-gradient-to-r from-gray-50/80 to-white/50 backdrop-blur-sm border-t border-white/30'>
             <button
               onClick={() => setPage((p) => Math.max(p - 1, 1))}
               disabled={page === 1}
@@ -332,7 +332,7 @@ export default function PurchaseHistory() {
             >
               Next
             </button>
-          </footer>
+          </footer> */}
         </section>
       </div>
     </main>

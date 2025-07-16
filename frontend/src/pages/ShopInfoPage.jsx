@@ -235,7 +235,7 @@ export default function ShopInfoPage() {
                     <div>Item Name</div>
                     <div className="text-right pr-8">Stock</div>
                     <div className="text-right pr-8">Price</div>
-                    <div className="text-right pr-8">Total</div>
+                    <div className="text-right pr-8">Action</div>
                   </div>
 
                   {products.map((product) => (
@@ -265,7 +265,7 @@ export default function ShopInfoPage() {
                         <div className="text-gray-800 text-right pr-8 font-medium">{product.stock}</div>
                         <div className="text-gray-800 text-right pr-8 font-medium">₱{product.price.toLocaleString()}</div>
                         <div className="text-right pr-8">
-                          <div className="text-gray-900 font-semibold">₱{(product.price * product.stock).toLocaleString()}</div>
+                          {/* <div className="text-gray-900 font-semibold">₱{(product.price * product.stock).toLocaleString()}</div> */}
                           <div className="mt-3 flex justify-end">
                             <button
                               onClick={navigateToEdit(product.id)}
@@ -370,9 +370,9 @@ export default function ShopInfoPage() {
                             </div>
                           </div>
                           <div className="text-gray-800 text-right pr-8 font-medium">{order.quantity}</div>
-                          <div className="text-gray-800 text-right pr-8 font-medium">₱{order.price.toLocaleString()}</div>
+                          <div className="text-gray-800 text-right pr-8 font-medium">₱{ order.price - (order.price * order.discount_percentage / 100).toLocaleString()}</div>
                           <div className="text-right pr-8">
-                            <div className="text-gray-900 font-semibold">₱{(order.price * order.quantity).toLocaleString()}</div>
+                            <div className="text-gray-900 font-semibold">₱{(order.total).toLocaleString()}</div>
                             <div className="mt-3 flex justify-end space-x-2">
                               {/* Accept Button - only show if status is pending */}
                               {order.status !== 'Accepted' && order.status !== 'Delivered' && order.status !== 'Declined' && (
@@ -419,7 +419,7 @@ export default function ShopInfoPage() {
                               )}
 
                               {/* Decline Button - only show if not delivered and not declined */}
-                              {order.status !== 'Delivered'&& (
+                              {order.status !== 'Delivered' && order.status === 'Processing' && (
                                 <button
                                   onClick={(e) => handleDeclineOrder(order.id)}
                                   className="px-4 py-2 text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md">
@@ -644,7 +644,7 @@ export default function ShopInfoPage() {
                                   )}
 
                                   {/* Decline Button - only show if not delivered */}
-                                  {order.status !== 'Delivered' && (
+                                  {order.status !== 'Delivered' && order.status === 'Processing' && (
                                     <button className="flex-1 px-3 py-2 text-white bg-gradient-to-r from-red-500 to-red-600 rounded-lg text-sm font-medium hover:from-red-600 hover:to-red-700 transition-all duration-200 shadow-sm hover:shadow-md">
                                       Decline
                                     </button>

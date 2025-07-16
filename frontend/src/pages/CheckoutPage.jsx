@@ -55,25 +55,41 @@ export default function Checkout() {
   const [debugInfo, setDebugInfo] = useState({}); // For debugging
 
   console.log(user)
+  console.log("product", product)
 
+  // Use function when data comes from location state
+  const calculateDiscountedPrice = (originalPrice, discount) => {
+    const discountDecimal = discount / 100;
+    return originalPrice * (1 - discountDecimal);
+  };
   // Load selected cart items from sessionStorage or fetch all cart items
   useEffect(() => {
     const loadItems = () => {
       try {
         // If buyNowProduct is present, use that as the cart item
         if (product && selectedSize && quantity) {
+
+          const originalPrice = Number(product.price);
+          const discount = product.discount || 0;
+
+          const discountedPricePerItem = calculateDiscountedPrice(originalPrice, discount);
+          const totalPrice = discountedPricePerItem * quantity;
+
           const buyNowItem = {
             ...product,
             quantity: quantity,
             selectedSize: selectedSize,
-            price: product.price, // Store the SINGLE item price here, not total
-            product_id: product.id
+            price: totalPrice,
+            originalPrice: originalPrice,
+            discount: discount,
+            product_id: product.id,
+            product: product
           };
           setCartItems([buyNowItem]);
           setPhoneNumber(product.shop?.phone || '');
         } else {
-          // Otherwise, load from sessionStorage or fetch all cart items
           const selectedItems = sessionStorage.getItem('selectedCartItems');
+          console.log("from cart", selectedItems)
           if (selectedItems) {
             const parsedItems = JSON.parse(selectedItems);
             setCartItems(parsedItems);
@@ -114,10 +130,13 @@ export default function Checkout() {
   }, [product, selectedSize, quantity]);
 
   const getDiscountedPrice = (item) => {
-    // Calculate discounted price per item
-    const originalPrice = Number(item.product.price);
-    const discount = item.product.discount / 100;
-    return originalPrice * (1 - discount);
+    if (item.price && item.price !== item.product?.price) {
+      return Number(item.price); // Already discounted
+    }
+
+    const originalPrice = Number(item.product?.price || item.price);
+    const discount = item.product?.discount || item.discount || 0;
+    return originalPrice * (1 - (discount / 100));
   };
   useEffect(() => {
     const fillAddressFromUser = () => {
@@ -135,10 +154,24 @@ export default function Checkout() {
     if (user) fillAddressFromUser();
   }, []);
 
+
+  const getItemPrice = (item) => {
+    // For cart items, the price is already discounted and includes quantity
+    if (item.price && item.hasOwnProperty('product_id')) {
+      return Number(item.price); // This is already the discounted total for the quantity
+    }
+
+    // For buy-now products from location state
+    const originalPrice = Number(item.price);
+    const discount = item.discount || 0;
+    const discountedPrice = originalPrice * (1 - (discount / 100));
+    return discountedPrice * (item.quantity || 1);
+  };
+
+
   const getCartTotal = () => {
     return cartItems.reduce((total, item) => {
-      // item.price is already the discounted total for the quantity
-      return total + Number(item.price);
+      return total + getItemPrice(item);
     }, 0);
   };
   const getCartItemsCount = () => {
@@ -292,21 +325,22 @@ export default function Checkout() {
       formData.append('state', customerInfo.state || 'N/A');
       formData.append('payment_method', selectedPayment);
 
-      // Add cart items
       cartItems.forEach((item, index) => {
         formData.append(`cart_items[${index}][product_id]`, item.product_id || item.product?.id || item.id);
-        formData.append(`cart_items[${index}][quantity]`, item.quantity);
-        formData.append(`cart_items[${index}][price]`, item.price);
+        formData.append(`cart_items[${index}][quantity]`, item.quantity || item.product?.quantity);
+        formData.append(`cart_items[${index}][price]`, item.price || item.product?.price);
+
+        if (item.discount) {
+          formData.append(`cart_items[${index}][discount]`, item.discount);
+        }
       });
 
-      // Add receipt file if GCash payment
       if (selectedPayment === 'gcash' && receiptFile) {
         formData.append('receipt', receiptFile);
       }
 
       console.log('📦 Submitting order with payment method:', selectedPayment);
 
-      // Submit order to API
       const response = await axios.post(
         'http://localhost:8000/api/v1/products/products/placeorder',
         formData,
@@ -936,10 +970,10 @@ export default function Checkout() {
               {/* Cart Items */}
               <div className='space-y-3 mb-4 max-h-60 overflow-y-auto'>
                 {cartItems.map((item) => {
-                  const discountedPrice = getDiscountedPrice(item);
-                  const originalPrice = Number(item.product.price);
-                  const hasDiscount = item.product.discount > 0;
-                  const itemTotal = Number(item.price); // Already includes quantity
+                  const itemTotal = getItemPrice(item);
+                  const originalPrice = Number(item.product?.price || item.price);
+                  const quantity = item.quantity || 1;
+                  const hasDiscount = (item.product?.discount || item.discount || 0) > 0;
 
                   return (
                     <div key={item.id} className='flex items-center space-x-3'>
@@ -950,7 +984,7 @@ export default function Checkout() {
                         </p>
                         {hasDiscount && (
                           <span className="text-xs text-gray-400 line-through">
-                            ₱{(originalPrice * item.quantity).toFixed(2)}
+                            ₱{(originalPrice * quantity).toFixed(2)}
                           </span>
                         )}
                       </div>

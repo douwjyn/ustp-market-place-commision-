@@ -89,6 +89,7 @@ class OwnStoreController
             'user_id' => ['required', 'exists:users,id'],
             'name' => ['required', 'string', 'max:255', 'unique:shops'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:shops'],
+            // 'phone' => ['required', 'regex:/^09\\d{9}$/', Rule::unique('shops')],
             'phone' => ['required', 'regex:/^09\\d{9}$/', Rule::unique('shops')],
             'id_type' => ['required', 'string', 'max:255'],
             'id_number' => ['required', 'string', 'max:255', 'unique:shops'],

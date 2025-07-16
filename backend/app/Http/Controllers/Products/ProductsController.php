@@ -487,10 +487,8 @@ class ProductsController
     //         'purchase' => $purchase,
     //     ]);
     // }
-
     public function placeOrder(Request $request)
     {
-        // dd("Waiting");
         $user = JWTAuth::user();
         if (!$user) {
             return response()->json([
@@ -504,6 +502,7 @@ class ProductsController
             'cart_items.*.product_id' => 'required|integer|exists:products,id',
             'cart_items.*.quantity' => 'required|integer|min:1',
             'cart_items.*.price' => 'required|numeric|min:0',
+            'cart_items.*.discount' => 'nullable|numeric|min:0|max:100', // Add discount validation
             'address' => 'required|max:120|min:8',
             'city' => 'required|max:120',
             'state' => 'required|max:120',
@@ -512,9 +511,8 @@ class ProductsController
             'email' => 'required|email',
         ];
 
-
         if ($request->payment_method === 'gcash') {
-            $rules['receipt'] = 'required|image|mimes:jpeg,png,jpg,gif|max:5120'; // 5MB max
+            $rules['receipt'] = 'required|image|mimes:jpeg,png,jpg,gif|max:5120';
         }
 
         $validator = Validator::make($request->all(), $rules, [
@@ -534,16 +532,6 @@ class ProductsController
             ], 422);
         }
 
-        // $owner = Shop::where('user_id', $user->id)->first();
-
-        // if ($owner) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'You are the owner of this shop, you cannot buy your own product',
-        //     ], 404);
-        // }
-
-
         $receiptPath = null;
         if ($request->payment_method === 'gcash' && $request->hasFile('receipt')) {
             try {
@@ -557,11 +545,10 @@ class ProductsController
             }
         }
 
-        //   $paymentMethodId = $request->payment_method === 'gcash' ? 2 : 1; 
-
         $purchases = [];
         $totalAmount = 0;
         $orderId = str_pad(random_int(0, 99999999), 8, '0', STR_PAD_LEFT);
+        $shippingFee = 150;
 
         foreach ($request->cart_items as $item) {
             $product = Product::find($item['product_id']);
@@ -589,27 +576,44 @@ class ProductsController
                 ], 400);
             }
 
-            // Calculate total for this item
-            $itemTotal = $product->price * $item['quantity'];
+            // Calculate prices properly
+            $originalPrice = $product->price;
+            $quantity = $item['quantity'];
+            $discountPercentage = isset($item['discount']) ? floatval($item['discount']) : 0;
+
+            // Calculate discount amount per unit
+            $discountAmountPerUnit = ($originalPrice * $discountPercentage) / 100;
+
+            // Calculate discounted price per unit
+            $discountedPricePerUnit = $originalPrice - $discountAmountPerUnit;
+
+            // Calculate total for this item (discounted price * quantity)
+            $itemSubtotal = $discountedPricePerUnit * $quantity;
+
+            // Add shipping fee (you might want to calculate this differently)
+            $itemTotal = $itemSubtotal + $shippingFee;
+
             $totalAmount += $itemTotal;
-            $shippingFee = 150;
+
             // Create purchase record
             $purchase = Purchase::create([
                 'user_id' => $user->id,
                 'shop_id' => $product->shop_id,
                 'product_id' => $product->id,
-                'quantity' => $item['quantity'],
-                'price' => $product->price,
-                'total' => $itemTotal + $shippingFee,
+                'quantity' => $quantity,
+                'price' => $originalPrice, // Store original price
+                'discount_percentage' => $discountPercentage, // Store discount percentage
+                'discount_amount' => $discountAmountPerUnit * $quantity, // Total discount amount
+                'subtotal' => $itemSubtotal, // Price after discount, before shipping
+                'shipping_fee' => $shippingFee,
+                'total' => $itemTotal, // Final total including shipping
                 'status' => 'Processing',
-                // 'status' => $request->payment_method === 'gcash' ? 'Proce' : 'Processing',
                 'payment_method' => $request->payment_method,
                 'order_id' => $orderId,
                 'address' => $validator->validated()['address'],
                 'city' => $validator->validated()['city'],
                 'state' => $validator->validated()['state'],
                 'phone' => $validator->validated()['phone'],
-                // 'receipt_path' => $receiptPath, // Store receipt path if uploaded
             ]);
 
             // Create notification for shop owner
@@ -632,18 +636,17 @@ class ProductsController
                 'type' => 'order',
                 'user_id' => $user->id,
                 'description' => 'Order placed by ' . $user->email . ', order ID: ' . $purchase->order_id,
-                // 'description' => 'Order #' . $purchase->order_id . ' has been placed as ' . strtolower($status) . ' by ' . $user->email,
-                // 'description' => 'Order #' . $purchase->order_id . ' placed.',
                 'purchase_id' => $purchase->id,
                 'status' => 'completed'
             ]);
 
             $purchases[] = $purchase;
 
-            $product->stock = $product->stock - $item['quantity'];
+            // Update product stock
+            $product->stock = $product->stock - $quantity;
             $product->save();
 
-
+            // Create payment record for GCash
             if ($request->payment_method == 'gcash') {
                 \App\Models\Payment::create([
                     'mode' => strtoupper($request->payment_method),
@@ -653,12 +656,11 @@ class ProductsController
             }
         }
 
-
-
         return response()->json([
             'success' => true,
             'message' => 'Order placed successfully',
             'purchases' => $purchases,
+            'total_amount' => $totalAmount,
         ]);
     }
 }

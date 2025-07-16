@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Home, ArrowLeft, Upload, AlertCircle, Package, Tag, Palette, DollarSign, Archive, X, Save } from "lucide-react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
-
+import toast from 'react-hot-toast'
 export default function ProductEdit() {
   const navigate = useNavigate();
   const { id } = useParams(); // Get product ID from URL params
@@ -79,7 +79,7 @@ export default function ProductEdit() {
 
       } catch (error) {
         console.error("Error fetching product:", error);
-        alert("Failed to load product data");
+        toast.error("Failed to load product data");
         navigate(-1);
       } finally {
         setLoading(false);
@@ -200,14 +200,14 @@ export default function ProductEdit() {
           },
         });
 
-        alert("Product updated successfully!");
+        toast.success("Product updated successfully!");
         navigate("/app/dashboard");
       } catch (err) {
         console.error("Update error:", err);
         if (err.response?.data?.message) {
-          alert(`Failed to update product: ${err.response.data.message}`);
+          toast.error(`Failed to update product: ${err.response.data.message}`);
         } else {
-          alert("Failed to update product");
+          toast.error("Failed to update product");
         }
       }
     }
