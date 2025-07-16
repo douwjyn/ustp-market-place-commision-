@@ -151,11 +151,11 @@ const UserProfileModal = ({ user, isOpen, onClose, onStatusChange }) => {
               <h3 className="text-lg font-semibold text-gray-800 break-words">
                 {user.first_name} {user.last_name}
               </h3>
-              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${!user.deleted_at
+              <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${user.is_online
                 ? 'bg-green-100 text-green-800'
-                : 'bg-red-100 text-red-800'
+                : 'bg-yellow-100 text-yellow-800'
                 }`}>
-                {!user.deleted_at ? 'Active' : 'Inactive'}
+                {user.is_online ? 'Active' : 'Inactive'}
               </span>
             </div>
           </div>
@@ -209,11 +209,13 @@ const UserProfileModal = ({ user, isOpen, onClose, onStatusChange }) => {
                 <span className="text-sm font-medium text-gray-700">Status:</span>
               </div>
               <div className="sm:col-span-2">
-                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${!user.deleted_at
+                <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${user.is_online
                   ? 'bg-green-100 text-green-800'
-                  : 'bg-red-100 text-red-800'
+                  // : 'bg-red-100 text-red-800'
+                : 'bg-yellow-100 text-yellow-800'
+
                   }`}>
-                  {!user.deleted_at ? 'Active' : 'Inactive'}
+                  {user.is_online ? 'Active' : 'Inactive'}
                 </span>
               </div>
             </div>
@@ -415,7 +417,7 @@ const UsersTable = ({ searchTerm, setSearchTerm }) => {
                       </td>
                       <td className="px-3 sm:px-6 py-4">
                         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${user.role === 'shop_owner'
-                          ? !user.deleted_at === 'Inactive'
+                          ? user.deleted_at
                             ? 'bg-red-100 text-red-800'
                             : 'bg-purple-100 text-purple-800'
                           : 'bg-blue-100 text-blue-800'
@@ -424,11 +426,13 @@ const UsersTable = ({ searchTerm, setSearchTerm }) => {
                         </span>
                       </td>
                       <td className="px-3 sm:px-6 py-4">
-                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${!user.deleted_at ?
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium whitespace-nowrap ${user.is_online ?
                           'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
+                          // : 'bg-red-100 text-red-800'
+                      : 'bg-yellow-100 text-yellow-800'
+
                           }`}>
-                          {!user.deleted_at ? 'Active' : 'Inactive'}
+                          {user.is_online ? 'Active' : 'Inactive'}
                         </span>
                       </td>
                       <td className={`px-3 sm:px-6 py-4 text-sm whitespace-nowrap ${user.status === 'Inactive' && user.role === 'Seller'
@@ -645,11 +649,11 @@ const ActivityManagement = () => {
                   <span className="text-sm font-medium text-gray-700">Status:</span>
                 </div>
                 <div className="col-span-2">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${!user.deleted_at ?
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium transition-colors ${user.is_online ?
                     'bg-green-100 text-green-800'
                     : 'bg-red-100 text-red-800'
                     }`}>
-                    {!user.deleted_at ? 'Active' : 'Inactive'}
+                    {user.is_online ? 'Active' : 'Inactive'}
                   </span>
                 </div>
               </div>
@@ -1133,10 +1137,10 @@ export default function AdDashboard() {
               <div className={`w-2 h-2 rounded-full ${user.is_online ? 'bg-green-500' : 'bg-yellow-500'}`}></div>
               <span className="text-sm font-medium text-gray-700">{user.is_online ? 'Online' : 'Away'}</span>
             </div>
-            <div className="flex items-center space-x-1 text-xs text-gray-500 mt-1">
+            {/* <div className="flex items-center space-x-1 text-xs text-gray-500 mt-1">
               <Clock className="w-3 h-3" />
               <span>{user.lastActive}</span>
-            </div>
+            </div> */}
           </div>
         </div>
       ))}
