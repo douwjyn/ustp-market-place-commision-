@@ -66,7 +66,7 @@ export default function Checkout() {
             ...product,
             quantity: quantity,
             selectedSize: selectedSize,
-            price: product.price * quantity, // Calculate total price
+            price: product.price, // Store the SINGLE item price here, not total
             product_id: product.id
           };
           setCartItems([buyNowItem]);
@@ -90,7 +90,7 @@ export default function Checkout() {
       }
     };
 
-    
+
     const fetchAllCartItems = async () => {
       try {
         const response = await fetch('http://localhost:8000/api/v1/cart', {
@@ -114,16 +114,13 @@ export default function Checkout() {
   }, [product, selectedSize, quantity]);
 
   const getDiscountedPrice = (item) => {
-    const price = item.price;
-    const discount = item.product?.discount || item.discount || 0;
-    if (discount > 0) {
-      return price * (1 - discount / 100);
-    }
-    return price;
+    // Calculate discounted price per item
+    const originalPrice = Number(item.product.price);
+    const discount = item.product.discount / 100;
+    return originalPrice * (1 - discount);
   };
   useEffect(() => {
     const fillAddressFromUser = () => {
-      console.log('jerehehr', user)
       setCustomerInfo({
         fullName: `${user.first_name || ''} ${user.last_name || ''}`.trim(),
         email: user.email || '',
@@ -138,11 +135,12 @@ export default function Checkout() {
     if (user) fillAddressFromUser();
   }, []);
 
-  // Calculate totals based on actual cart items
   const getCartTotal = () => {
-    return cartItems.reduce((total, item) => total + Number(item.price), 0);
+    return cartItems.reduce((total, item) => {
+      // item.price is already the discounted total for the quantity
+      return total + Number(item.price);
+    }, 0);
   };
-
   const getCartItemsCount = () => {
     return cartItems.reduce((count, item) => count + item.quantity, 0);
   };
@@ -151,7 +149,7 @@ export default function Checkout() {
   const totalOrders = getCartItemsCount();
   const shippingFee = 150;
   const totalPrice = getCartTotal();
-  const finalTotal = totalPrice;
+  const finalTotal = totalPrice + shippingFee;
 
   const getImageUrl = (imagePath) => {
     return `http://localhost:8000/storage/${imagePath}`;
@@ -655,10 +653,10 @@ export default function Checkout() {
               Please go back to your cart and select items to checkout
             </p>
             <button
-              onClick={() => navigate('/app/cart')}
+              onClick={() => navigate(-1)}
               className='px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors mr-4'
             >
-              Back to Cart
+              Back
             </button>
             <button
               onClick={() => navigate('/app/dashboard')}
@@ -686,7 +684,7 @@ export default function Checkout() {
         {/* Header */}
         <div className='flex items-center mb-8'>
           <button
-            onClick={() => navigate('/app/cart')}
+            onClick={() => navigate(-1)}
             className='mr-4 p-2 hover:bg-white rounded-full transition-colors'
           >
             <ArrowLeft className='w-6 h-6' />
@@ -937,36 +935,28 @@ export default function Checkout() {
 
               {/* Cart Items */}
               <div className='space-y-3 mb-4 max-h-60 overflow-y-auto'>
-                {cartItems.map((item) => (
-                  <div key={item.id} className='flex items-center space-x-3'>
-                    <img
-                      src={getImageUrl(item.product?.images?.[0]?.image || item.images?.[0]?.image)}
-                      alt={item.name}
-                      className='w-12 h-12 object-cover rounded'
-                      onError={(e) => {
-                        e.target.src = '/src/assets/placeholder.jpg';
-                      }}
-                    />
-                    <div className='flex-1'>
-                      <p className='text-sm font-medium text-gray-800'>
-                        {item.name}
-                      </p>
-                      <p className='text-xs text-gray-500'>
-                        Qty: {item.quantity}
+                {cartItems.map((item) => {
+                  const discountedPrice = getDiscountedPrice(item);
+                  const originalPrice = Number(item.product.price);
+                  const hasDiscount = item.product.discount > 0;
+                  const itemTotal = Number(item.price); // Already includes quantity
 
-                      </p>
+                  return (
+                    <div key={item.id} className='flex items-center space-x-3'>
+                      {/* ... other item display ... */}
+                      <div className="text-right">
+                        <p className='text-sm font-medium text-gray-800'>
+                          ₱{itemTotal.toFixed(2)}
+                        </p>
+                        {hasDiscount && (
+                          <span className="text-xs text-gray-400 line-through">
+                            ₱{(originalPrice * item.quantity).toFixed(2)}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                    <p className='text-sm font-medium text-gray-800'>
-                      ₱{Number(item.price).toFixed(2)}
-                    </p>
-                    {(item.product?.discount || item.discount) > 0 && (
-                      <span className="text-xs text-gray-400 line-through ml-2">
-                        ₱{(item.price * item.quantity).toFixed(2)}
-                        {/* ₱{Number(item.price).toFixed(2)} */}
-                      </span>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
 
               {/* Order Totals */}

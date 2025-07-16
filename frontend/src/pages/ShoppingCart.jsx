@@ -44,10 +44,10 @@ export default function ShoppingCart() {
   // Check if all selected items are from the same store
   const checkSameStore = () => {
     if (selectedItems.size === 0) return false;
-    
+
     const selectedItemsData = cartItems.filter(item => selectedItems.has(item.id));
     if (selectedItemsData.length === 0) return false;
-    
+
     const firstStoreId = selectedItemsData[0].product.shop.id;
     return selectedItemsData.every(item => item.product.shop.id === firstStoreId);
   };
@@ -73,7 +73,7 @@ export default function ShoppingCart() {
       // Check if all items are from the same store
       const firstStoreId = cartItems[0].product.shop.id;
       const allSameStore = cartItems.every(item => item.product.shop.id === firstStoreId);
-      
+
       if (allSameStore) {
         // Select all items if they're from the same store
         setSelectedItems(new Set(cartItems.map(item => item.id)));
@@ -83,14 +83,14 @@ export default function ShoppingCart() {
     }
   };
 
-  // Calculate totals for selected items only
-  const getSelectedItemsTotal = () => {
-    return cartItems
-      .filter(item => selectedItems.has(item.id))
-      .reduce((total, item) => {
-        return total + (Number(item.price) * item.quantity);
-      }, 0);
-  };
+const getSelectedItemsTotal = () => {
+  return cartItems
+    .filter(item => selectedItems.has(item.id))
+    .reduce((total, item) => {
+      // Use the already discounted total price from item.price
+      return total + Number(item.price);
+    }, 0);
+};
 
   const getSelectedItemsCount = () => {
     return cartItems
@@ -201,11 +201,10 @@ export default function ShoppingCart() {
     return cartItems.map((item) => (
       <article
         key={item.id}
-        className={`bg-white border rounded-xl p-4 md:p-6 mb-4 transition-all duration-200 ${
-          selectedItems.has(item.id)
+        className={`bg-white border rounded-xl p-4 md:p-6 mb-4 transition-all duration-200 ${selectedItems.has(item.id)
             ? 'border-[#183B4E] ring-2 ring-[#183B4E]/20 bg-blue-50/30'
             : 'border-gray-100 hover:border-gray-200'
-        }`}
+          }`}
       >
         <div className='flex items-start gap-4'>
           <input
@@ -249,7 +248,7 @@ export default function ShoppingCart() {
             </div>
             <div className='flex flex-col md:flex-row md:justify-between md:items-center mt-4 gap-3'>
               <div className='text-[#183B4E] font-bold text-lg'>
-                ₱{(item.price / item.quantity).toFixed(2)}
+                ₱{(item.price / item.quantity).toFixed(2)} 
               </div>
               <div className='flex items-center justify-between md:justify-end gap-4'>
                 <div className='flex flex-col sm:flex-row items-center gap-3'>
@@ -403,11 +402,11 @@ export default function ShoppingCart() {
                   </p>
                 )}
 
-                <div className='mt-4 text-center'>
+                {/* <div className='mt-4 text-center'>
                   <p className='text-xs text-gray-500'>
                     Secure checkout with SSL encryption
                   </p>
-                </div>
+                </div> */}
               </div>
             </aside>
           </div>

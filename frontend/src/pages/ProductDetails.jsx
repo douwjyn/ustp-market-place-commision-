@@ -474,7 +474,12 @@ export default function ProductDetails() {
                     <div className="space-y-4 pt-4 border-t border-gray-200">
                       <div className="flex items-center justify-between text-lg">
                         <span className="font-semibold text-gray-800">Total:</span>
-                        <span className="font-bold text-2xl text-blue-600">₱{(product.price * quantity)?.toLocaleString()}</span>
+                        <span className="font-bold text-2xl text-blue-600">
+                          ₱{(discountedPrice * quantity)?.toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2
+                          })}
+                        </span>
                       </div>
 
                       <div className="flex gap-3">
