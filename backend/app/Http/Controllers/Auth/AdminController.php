@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use App\Models\Product;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AdminController extends Controller
 {
@@ -111,5 +112,48 @@ class AdminController extends Controller
         $activity->save();
 
         return response()->json('Product accepted');
+    }
+
+    public function update_profile(Request $request)
+    {
+        $user = User::find(Auth::id());
+
+        $validator = Validator::make($request->all(), [
+            'first_name' => ['sometimes', 'string', 'nullable', 'max:255'],
+            'email' => ['sometimes', 'nullable', 'email', Rule::unique('users')->ignore($user->id)],
+            'phone' => ['sometimes', 'nullable', 'string', Rule::unique('users')->ignore($user->id)],
+            'address' => ['sometimes', 'nullable', 'string', 'max:255'],
+            'profile_image' => ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => $validator->errors(),
+            ], 422);
+        }
+
+        $updateData = $validator->validated();
+
+
+        if ($request->hasFile('profile_image')) {
+            $path = $request->file('profile_image')->store('profile_images', 'public');
+            $updateData['image_path'] = $path; 
+        }
+
+        $user->update($updateData);
+
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profile updated successfully',
+            'user' => $user
+        ]);
+    }
+    public function profile(Request $request)
+    {
+        $user = User::find(Auth::id());
+
+        return response()->json($user);
     }
 }

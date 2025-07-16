@@ -31,6 +31,8 @@ Route::middleware([AuthProvider::class])->group(function () {
     Route::get('/admin/activities', [ActivityController::class, 'index']);
     Route::put('/admin/product/{id}/accepted/{user_id}', [AdminController::class, 'accept_product']);
     Route::put('/admin/change_password', [AdminController::class, 'change_password']);
+    Route::get('/admin/profile', [AdminController::class, 'profile']);
+    Route::post('/admin/profile', [AdminController::class, 'update_profile']);
     Route::get('/admin/notifications', [AdminNotificationController::class, 'index']);
     Route::post('/admin/notifications/mark-read/{id}', [AdminNotificationController::class, 'mark_as_read']);
     Route::post('/admin/notifications/mark-all-read', [AdminNotificationController::class, 'mark_all_as_read']);
