@@ -27,9 +27,10 @@ export default function ResetPassword() {
                 password_confirmation: confirmPassword,
             });
             setMessage(res.data.message);
-            setIsSuccess(res.data.message.includes("Your password has been reset."))
+            setIsSuccess(res.data.message == "Your password has been reset.")
         } catch (error) {
             setMessage(error.response?.data?.message || "Something went wrong.");
+            setIsSuccess(false)
         }
     };
 
