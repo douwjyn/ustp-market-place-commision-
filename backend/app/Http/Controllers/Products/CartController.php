@@ -34,7 +34,7 @@ class CartController extends Controller
         // Check if cart item already exists
         $existingCartItem = Cart::where([
             'user_id' => $user->id,
-            'selected_size' => $request->selected_size,
+            'selected_size' => $request->selected_size || 7,
             'product_id' => $request->product_id,
         ])->first();
 

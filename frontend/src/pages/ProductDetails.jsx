@@ -138,6 +138,11 @@ export default function ProductDetails() {
     // alert("Product added to cart!");
     // navigate('/app/cart');
     try {
+      if (!selectedSize) {
+        toast.error("Please select a size")
+        return
+      };
+
       const response = await axios.post('http://localhost:8000/api/v1/cart/add',
         {
           product_id: product.id,
@@ -176,8 +181,13 @@ export default function ProductDetails() {
   const handleCheckout = () => {
     if (!product) return;
 
+    if (!selectedSize) {
+      toast.error("Please select a size")
+      return
+    };
+
     // Navigate directly to checkout page, passing the product details as state
-    navigate('/checkout', {
+    navigate('/app/checkout', {
       state: {
         buyNowProduct: {
           product,
@@ -340,7 +350,7 @@ export default function ProductDetails() {
 
                       <div className="flex items-baseline gap-3">
                         <span className="text-4xl text-blue-700 font-bold ml-2">
-                              ₱{Number(discountedPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                          ₱{Number(discountedPrice).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
 
                         </span>
                         {product.discount > 0 && (

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   ArrowLeft,
   CreditCard,
@@ -21,6 +21,14 @@ import { useContext } from 'react'
 import { UserContext } from '../context/UserProvider';
 import toast from 'react-hot-toast'
 export default function Checkout() {
+
+  const location = useLocation();
+  const { buyNowProduct } = location.state || {};
+
+  const product = buyNowProduct?.product;
+  const selectedSize = buyNowProduct?.selectedSize;
+  const quantity = buyNowProduct?.quantity;
+
   const navigate = useNavigate();
   const { clearCart } = useCart();
   const [selectedPayment, setSelectedPayment] = useState('');
@@ -50,24 +58,39 @@ export default function Checkout() {
 
   // Load selected cart items from sessionStorage or fetch all cart items
   useEffect(() => {
-    const loadCartItems = () => {
+    const loadItems = () => {
       try {
-        const selectedItems = sessionStorage.getItem('selectedCartItems');
-        if (selectedItems) {
-          const parsedItems = JSON.parse(selectedItems);
-          console.log('Loaded selected items from sessionStorage:', parsedItems);
-          setCartItems(parsedItems);
-          setPhoneNumber(parsedItems[0].product.shop.phone)
+        // If buyNowProduct is present, use that as the cart item
+        if (product && selectedSize && quantity) {
+          const buyNowItem = {
+            ...product,
+            quantity: quantity,
+            selectedSize: selectedSize,
+            price: product.price * quantity, // Calculate total price
+            product_id: product.id
+          };
+          setCartItems([buyNowItem]);
+          setPhoneNumber(product.shop?.phone || '');
         } else {
-          // Fallback: fetch all cart items if no selection
-          fetchAllCartItems();
+          // Otherwise, load from sessionStorage or fetch all cart items
+          const selectedItems = sessionStorage.getItem('selectedCartItems');
+          if (selectedItems) {
+            const parsedItems = JSON.parse(selectedItems);
+            setCartItems(parsedItems);
+            setPhoneNumber(parsedItems[0]?.product?.shop?.phone || '');
+          } else {
+            fetchAllCartItems();
+          }
         }
       } catch (error) {
-        console.error('Error loading cart items:', error);
-        fetchAllCartItems();
+        console.error('Error loading items:', error);
+        if (!product) {
+          fetchAllCartItems();
+        }
       }
     };
 
+    
     const fetchAllCartItems = async () => {
       try {
         const response = await fetch('http://localhost:8000/api/v1/cart', {
@@ -79,17 +102,16 @@ export default function Checkout() {
         });
         if (response.ok) {
           const data = await response.json();
-          console.log('Fetched all cart items:', data);
           setCartItems(data);
-          setPhoneNumber(data.product.shop.phone)
+          setPhoneNumber(data[0]?.product?.shop?.phone || '');
         }
       } catch (error) {
         console.error('Error fetching cart items:', error);
       }
     };
 
-    loadCartItems();
-  }, []);
+    loadItems();
+  }, [product, selectedSize, quantity]);
 
   const getDiscountedPrice = (item) => {
     const price = item.price;
@@ -705,14 +727,6 @@ export default function Checkout() {
                     Customer Information
                   </h2>
                 </div>
-                {user && (
-                  <button
-                    onClick={() => navigate('/profile')}
-                    className='text-sm text-blue-600 hover:text-blue-800 underline'
-                  >
-                    Update Profile
-                  </button>
-                )}
               </div>
 
               <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
