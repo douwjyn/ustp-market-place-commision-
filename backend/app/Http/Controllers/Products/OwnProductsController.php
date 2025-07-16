@@ -103,6 +103,7 @@ class OwnProductsController
             'color' => $validated['color'] ?? null,
             'price' => $validated['price'],
             'stock' => $validated['stock'],
+            'discount' => $validated['discount']
             //'accepted' => false
         ]);
 
@@ -248,7 +249,7 @@ class OwnProductsController
             'color' => 'nullable|string',
             'price' => 'required|numeric|min:0',
             'stock' => 'required|integer|min:0',
-            'discount' => 'required|integer|min:0|max:100',
+            'discount' => 'required|numeric|min:0|max:100',
             'categories' => 'nullable|array',
             'categories.*' => 'exists:categories,name',
             'sizes' => 'nullable|array',

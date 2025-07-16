@@ -19,7 +19,7 @@ import { useCart } from '../context/CartContext';
 import axios from 'axios';
 import { useContext } from 'react'
 import { UserContext } from '../context/UserProvider';
-
+import toast from 'react-hot-toast'
 export default function Checkout() {
   const navigate = useNavigate();
   const { clearCart } = useCart();
@@ -344,10 +344,15 @@ export default function Checkout() {
         if (Object.keys(newErrors).length > 0) {
           setErrors(newErrors);
         } else {
-          setErrors({ general: 'Failed to place order. Please try again.' });
+          setShowReceiptModal(false)
+          toast.error(error.response.data.message || 'Failed to place order. Please try again.')
+          setErrors({ general: error.response.data.message || 'Failed to place order. Please try again.' });
         }
       } else {
-        setErrors({ general: 'Failed to place order. Please try again.' });
+        setShowReceiptModal(false)
+        toast.error(error.response.data.message || 'Failed to place order. Please try again.')
+
+        setErrors({ general: error.response.data.message || 'Failed to place order. Please try again.' });
       }
     } finally {
       setIsProcessing(false);
@@ -562,42 +567,42 @@ export default function Checkout() {
   };
 
   // Debug component to show debugging information (remove in production)
-  const DebugPanel = () => {
-    if (process.env.NODE_ENV === 'production') return null;
+  // const DebugPanel = () => {
+  //   if (process.env.NODE_ENV === 'production') return null;
 
-    return (
-      <div className='bg-gray-100 p-4 rounded-lg mb-6 text-xs text-black'>
-        <details >
-          <summary className='cursor-pointer font-bold'>
-            🐛 Debug Info (Click to expand)
-          </summary>
-          <pre className='mt-2 whitespace-pre-wrap '>
-            {JSON.stringify(
-              {
-                debugInfo,
-                customerInfo,
-                selectedAddressId,
-                selectedPayment,
-                receiptFile: receiptFile?.name,
-                userFromAuth: user,
-                tokenExists: !!token,
-                cartItemsCount: cartItems.length,
-                cartItems: cartItems.map(item => ({
-                  id: item.id,
-                  name: item.name,
-                  price: item.price,
-                  quantity: item.quantity,
-                  product_id: item.product_id || item.product?.id
-                }))
-              },
-              null,
-              2
-            )}
-          </pre>
-        </details>
-      </div>
-    );
-  };
+  //   return (
+  //     <div className='bg-gray-100 p-4 rounded-lg mb-6 text-xs text-black'>
+  //       <details >
+  //         <summary className='cursor-pointer font-bold'>
+  //           🐛 Debug Info (Click to expand)
+  //         </summary>
+  //         <pre className='mt-2 whitespace-pre-wrap '>
+  //           {JSON.stringify(
+  //             {
+  //               debugInfo,
+  //               customerInfo,
+  //               selectedAddressId,
+  //               selectedPayment,
+  //               receiptFile: receiptFile?.name,
+  //               userFromAuth: user,
+  //               tokenExists: !!token,
+  //               cartItemsCount: cartItems.length,
+  //               cartItems: cartItems.map(item => ({
+  //                 id: item.id,
+  //                 name: item.name,
+  //                 price: item.price,
+  //                 quantity: item.quantity,
+  //                 product_id: item.product_id || item.product?.id
+  //               }))
+  //             },
+  //             null,
+  //             2
+  //           )}
+  //         </pre>
+  //       </details>
+  //     </div>
+  //   );
+  // };
 
   // Loading state while fetching profile
   if (isLoadingProfile) {
@@ -654,7 +659,7 @@ export default function Checkout() {
 
       <div className='flex-1 container mx-auto px-4 py-8 max-w-6xl'>
         {/* Debug Panel - Remove in production */}
-        <DebugPanel />
+        {/* <DebugPanel /> */}
 
         {/* Header */}
         <div className='flex items-center mb-8'>

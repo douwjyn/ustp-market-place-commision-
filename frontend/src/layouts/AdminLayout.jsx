@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Outlet, Navigate, useLocation, useNavigate, } from 'react-router-dom'
+import { Outlet, Navigate, useLocation, useNavigate, Link } from 'react-router-dom'
 import { useUser } from '../context/UserProvider'
 import axios from 'axios'
 export default function AdminLayout() {
@@ -45,6 +45,7 @@ export default function AdminLayout() {
     }
 
     const handleNavigate = (route) => {
+        setShowUserDropdown(false)
         navigate(route)
     }
 
@@ -70,11 +71,14 @@ export default function AdminLayout() {
                     {/* Left side - USTP Logo */}
                     <div className="flex flex-row items-center gap-4">
                         <div className="relative w-16 h-16 mb-2">
-                            <img
-                                src="/src/assets/logo.png"
-                                alt="USTP Logo"
-                                className="absolute inset-0 w-full h-full object-contain rounded-full "
-                            />
+                            <Link to="/admin/dashboard">
+                                <img
+                                    src="/src/assets/logo.png"
+                                    alt="USTP Logo"
+                                    className="absolute inset-0 w-full h-full object-contain rounded-full "
+
+                                />
+                            </Link>
                         </div>
                         <div className="text-center">
                             <h1 className="text-lg font-bold text-blue-900 leading-tight">USTP MARKETPLACE</h1>
@@ -145,12 +149,23 @@ export default function AdminLayout() {
                                 onClick={() => setShowUserDropdown(!showUserDropdown)}
                                 className="flex items-center space-x-3 px-4 py-2 rounded-full bg-gray-50/50 hover:bg-gray-100/50 border border-gray-200/50 transition-all duration-200 backdrop-blur-sm"
                             >
-                                <span className="text-sm font-medium text-gray-700">Admin</span>
-                                <div className="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center">
-                                    <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
+                                <span className="text-sm font-medium text-gray-700">{user.first_name}</span>
+                                <div className="w-8 h-8 bg-gray-200 rounded-full overflow-hidden flex items-center justify-center">
+                                    {
+                                        user.image_path ? (
+                                            <img
+                                                className="w-full h-full object-cover"
+                                                src={`http://localhost:8000/storage/${user.image_path}`}
+                                                alt="profile"
+                                            />
+                                        ) : (
+                                            <svg className="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                                            </svg>
+                                        )
+                                    }
                                 </div>
+
                                 <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                                 </svg>

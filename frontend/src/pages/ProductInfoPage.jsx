@@ -71,6 +71,7 @@ export default function ProductInfoPage() {
     if (!productName.trim()) errors.productName = "Product name is required";
     if (!productDescription.trim()) errors.productDescription = "Product description is required";
     if (categories.length === 0) errors.categories = "Please select at least one category";
+    if (selectedSizes.length === 0) errors.sizes = "Please select at least one size";
     if (productImages.length === 0) errors.images = "At least one product image is required";
     if (!price.trim()) errors.price = "Price is required";
     if (parseFloat(price) <= 0) errors.price = "Price must be greater than 0";
@@ -128,7 +129,7 @@ export default function ProductInfoPage() {
     if (formSubmitted) {
       setFormErrors(validateForm());
     }
-  }, [productName, productDescription, categories, productImages, price, stock, discount, formSubmitted]);
+  }, [productName, productDescription, categories, selectedSizes, productImages, price, stock, discount, formSubmitted]);
 
   return (
     <main className="flex flex-col min-h-screen w-screen bg-gradient-to-br from-[#F8FAFC] to-[#E2E8F0] font-sans">
@@ -361,6 +362,11 @@ export default function ProductInfoPage() {
               <div className="flex items-center gap-2 mb-4">
                 <Package size={20} className="text-[#183B4E]" />
                 <h2 className="text-lg font-semibold text-gray-900">Available Sizes</h2>
+                {formErrors.sizes && (
+                  <span className="text-red-500 text-sm flex items-center gap-1">
+                    <AlertCircle size={16} /> {formErrors.sizes}
+                  </span>
+                )}
               </div>
               <div className="flex flex-wrap gap-3">
                 {availableSizes.map((size) => (

@@ -262,10 +262,8 @@ function ProfilePage() {
       formData.append('gender', gender);
       formData.append('dob', dateOfBirth);
 
-      // Handle image upload - ensure we're sending a proper File object
       if (image && image instanceof File) {
         if (completedCrop && previewUrl && imgRef) {
-          // Use cropped image if crop is available
           const croppedImage = await getCroppedImage();
           if (croppedImage && croppedImage instanceof File) {
             console.log('Appending cropped image:', croppedImage);
@@ -275,7 +273,6 @@ function ProfilePage() {
             formData.append('image_path', image, image.name);
           }
         } else {
-          // Use original image file if no crop
           console.log('Appending original image:', image);
           formData.append('image_path', image, image.name);
         }

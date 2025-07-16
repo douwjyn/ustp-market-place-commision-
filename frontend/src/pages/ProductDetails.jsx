@@ -323,7 +323,7 @@ export default function ProductDetails() {
                       <div className="flex justify-between items-start">
                         <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">{product.name}</h1>
                         <div className="flex gap-2 ml-4">
-                          <button
+                          {/* <button
                             onClick={() => setIsFavorite(!isFavorite)}
                             className={`p-2 rounded-full border transition-all ${isFavorite
                               ? 'bg-red-50 border-red-200 text-red-500'
@@ -331,10 +331,10 @@ export default function ProductDetails() {
                               }`}
                           >
                             <Heart size={20} fill={isFavorite ? 'currentColor' : 'none'} />
-                          </button>
-                          <button className="p-2 rounded-full border bg-gray-50 border-gray-200 text-gray-400 hover:text-blue-500 transition-colors">
+                          </button> */}
+                          {/* <button className="p-2 rounded-full border bg-gray-50 border-gray-200 text-gray-400 hover:text-blue-500 transition-colors">
                             <Share2 size={20} />
-                          </button>
+                          </button> */}
                         </div>
                       </div>
 

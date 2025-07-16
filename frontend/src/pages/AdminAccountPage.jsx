@@ -154,7 +154,7 @@ export default function AdminAccountPage() {
       }
     } catch (error) {
       console.error('Password change error:', error);
-      setErrors({ general:  error.response.data.message || 'Network error. Please check your connection and try again.' });
+      setErrors({ general: error.response.data.message || 'Network error. Please check your connection and try again.' });
     } finally {
       setIsSubmitting(false);
     }
@@ -172,15 +172,19 @@ export default function AdminAccountPage() {
 
   return (
     <div className="min-h-screen w-screen bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 flex flex-col">
-    
+
 
       <main className="p-6 min-h-[calc(100vh-80px)]">
         <div className="max-w-7xl mx-auto h-full">
           <div className="flex gap-6 h-full">
             <div className="flex-1 min-w-0">
+
               <div className="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl border border-gray-200/50 p-8 h-full">
+                <button onClick={() => navigate(-1)} className='text-gray-700 text-sm mb-4 shadow-sm rounded-sm px-2 py-1.5'>Back</button>
                 <div className="max-w-md mx-auto">
+
                   <div className="text-center mb-8">
+
                     <h2 className="text-2xl font-bold text-gray-800 mb-2">Account Settings</h2>
                     <p className="text-sm text-gray-600">Change your password to keep your account secure</p>
                   </div>

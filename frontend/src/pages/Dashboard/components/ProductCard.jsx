@@ -18,10 +18,11 @@ export default function ProductCard({ product, onAddToCart, viewMode }) {
     e.target.src = '/src/assets/placeholder.jpg';
   };
 
-const getOriginalPrice = (discountedPrice, discountPercent) => {
-  if (!discountPercent || discountPercent <= 0) return null;
-  return discountedPrice / (1 - discountPercent / 100);
-};
+  // Fixed: Calculate discounted price from original price
+  const getDiscountedPrice = (originalPrice, discountPercent) => {
+    if (!discountPercent || discountPercent <= 0) return originalPrice;
+    return originalPrice * (1 - discountPercent / 100);
+  };
 
   const handleProductClick = () => {
     const productId = product.id || product.product_id;
@@ -34,6 +35,11 @@ const getOriginalPrice = (discountedPrice, discountPercent) => {
     // 
     navigate(`/app/product/${id}`)
   };
+
+  // Calculate prices
+  const originalPrice = Number(product.price);
+  const discountedPrice = getDiscountedPrice(originalPrice, product.discount);
+  const savings = originalPrice - discountedPrice;
 
   return viewMode === 'grid' ? (
     <article
@@ -49,17 +55,16 @@ const getOriginalPrice = (discountedPrice, discountPercent) => {
           loading='lazy'
         />
         {/* {JSON.stringify(product.)} */}
-        {product.discount > 0 &&
-
+        {product.discount > 0 && (
           <div className='absolute top-3 left-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-3 py-1 rounded-full flex items-center gap-1'>
             <Star size={12} fill='currentColor' />
             {product.discount}% OFF
           </div>
-        }
+        )}
 
-        <button className='absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors'>
+        {/* <button className='absolute top-3 right-3 p-2 bg-white/80 backdrop-blur-sm rounded-full hover:bg-white transition-colors'>
           <Heart size={16} className='text-gray-600 hover:text-red-500' />
-        </button>
+        </button> */}
       </div>
 
       <div className='space-y-3'>
@@ -67,25 +72,21 @@ const getOriginalPrice = (discountedPrice, discountPercent) => {
           {product.name}
         </h3>
 
-       <div className='flex items-center justify-between'>
-  <span className='text-[#183B4E] font-bold text-lg'>
-    ₱{Number(product.price).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-  </span>
-  {product.discount > 0 && (
-    <span className='text-gray-400 text-sm line-through'>
-      ₱{getOriginalPrice(Number(product.price), product.discount)?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-    </span>
-  )}
-</div>
-{product.discount > 0 && (() => {
-  const original = getOriginalPrice(Number(product.price), product.discount);
-  const save = original - Number(product.price);
-  return save > 0.01 ? (
-    <p className='text-green-600 text-xs font-medium'>
-      Save ₱{save.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-    </p>
-  ) : null;
-})()}
+        <div className='flex items-center justify-between'>
+          <span className='text-[#183B4E] font-bold text-lg'>
+            ₱{discountedPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </span>
+          {product.discount > 0 && (
+            <span className='text-gray-400 text-sm line-through'>
+              ₱{originalPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+          )}
+        </div>
+        {product.discount > 0 && savings > 0.01 && (
+          <p className='text-green-600 text-xs font-medium'>
+            Save ₱{savings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          </p>
+        )}
         <button
           onClick={() => handleAddToCartClick(product.id)}
           className='w-full flex items-center justify-center gap-2 py-2.5 bg-[#DDA853] text-black rounded-xl hover:bg-[#183B4E] hover:text-white transition-all duration-300 font-medium'
@@ -111,10 +112,12 @@ const getOriginalPrice = (discountedPrice, discountPercent) => {
             onError={handleImageError}
             loading='lazy'
           />
-          <div className='absolute top-2 left-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1'>
-            <Star size={10} fill='currentColor' />
-            20% OFF
-          </div>
+          {product.discount > 0 && (
+            <div className='absolute top-2 left-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white text-xs font-bold px-2 py-1 rounded-full flex items-center gap-1'>
+              <Star size={10} fill='currentColor' />
+              {product.discount}% OFF
+            </div>
+          )}
         </div>
 
         <div className='flex-1 space-y-3'>
@@ -135,18 +138,19 @@ const getOriginalPrice = (discountedPrice, discountPercent) => {
             <div className='space-y-1'>
               <div className='flex items-center gap-3'>
                 <span className='text-[#183B4E] font-bold text-xl'>
-                  ₱{product.price?.toLocaleString()}
+                  ₱{discountedPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </span>
-                <span className='text-gray-400 text-sm line-through'>
-                  ₱{getOriginalPrice(product.price)?.toLocaleString()}
-                </span>
+                {product.discount > 0 && (
+                  <span className='text-gray-400 text-sm line-through'>
+                    ₱{originalPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                )}
               </div>
-              <p className='text-green-600 text-xs font-medium'>
-                Save ₱
-                {(
-                  getOriginalPrice(product.price) - product.price
-                )?.toLocaleString()}
-              </p>
+              {product.discount > 0 && savings > 0.01 && (
+                <p className='text-green-600 text-xs font-medium'>
+                  Save ₱{savings.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </p>
+              )}
             </div>
 
             <button
