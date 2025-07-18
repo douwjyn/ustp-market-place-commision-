@@ -2,8 +2,10 @@ import React, { useState, useEffect } from "react";
 import { Home, ArrowLeft, Upload, AlertCircle, Package, Tag, Palette, DollarSign, Archive, CheckCircle, X } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Loader from "../components/Loader";
 
 export default function ProductInfoPage() {
+  const [isPublishing, setIsPublishing] = useState(false);
   const navigate = useNavigate();
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
@@ -86,6 +88,7 @@ export default function ProductInfoPage() {
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
+      setIsPublishing(true);
       try {
         const formData = new FormData();
         formData.append("name", productName);
@@ -113,9 +116,10 @@ export default function ProductInfoPage() {
 
         // Show success modal instead of alert
         setShowSuccessModal(true);
-      } catch (err) {
-        console.error(err);
-        alert("Failed to publish product");
+      } catch (error) {
+        setFormErrors({ api: "Failed to add product. Please try again." });
+      } finally {
+        setIsPublishing(false); // Set 'isPublishing' to false after the async call
       }
     }
   };
@@ -131,8 +135,9 @@ export default function ProductInfoPage() {
     }
   }, [productName, productDescription, categories, selectedSizes, productImages, price, stock, discount, formSubmitted]);
 
-  return (
-    <main className="flex flex-col min-h-screen w-screen bg-gradient-to-br from-[#F8FAFC] to-[#E2E8F0] font-sans">
+  return (<>
+      {isPublishing && <Loader />}
+      <main className="flex flex-col min-h-screen w-screen bg-gradient-to-br from-[#F8FAFC] to-[#E2E8F0] font-sans">
       {/* Success Modal */}
       {showSuccessModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
@@ -480,5 +485,6 @@ export default function ProductInfoPage() {
         </div>
       </section>
     </main>
+    </>
   );
 }
