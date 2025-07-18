@@ -225,7 +225,7 @@ const getSelectedItemsTotal = () => {
               <h3 className='text-gray-900 font-medium text-sm md:text-base line-clamp-2'>
                 {item.name}
               </h3>
-              <span className='text-xs bg-gray-100 px-2 py-1 rounded'>
+              <span className='text-xs text-black bg-gray-100 px-2 py-1 rounded'>
                 {item.product.shop.name}
               </span>
             </div>

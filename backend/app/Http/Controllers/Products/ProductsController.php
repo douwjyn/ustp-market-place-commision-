@@ -19,7 +19,7 @@ class ProductsController
      */
     public function index()
     {
-        $products = Product::with(['images', 'categories'])->where('accepted', true)->paginate(1);
+        $products = Product::with(['images', 'categories'])->where('accepted', true)->paginate(20);
         // $trending_products = Product::with(['images', 'categories'])
         //     ->where('accepted', true)
         //     ->select('products.id', 'products.name', 'products.description', 'products.price', DB::raw('COUNT(purchases.id) as total_purchases'))
