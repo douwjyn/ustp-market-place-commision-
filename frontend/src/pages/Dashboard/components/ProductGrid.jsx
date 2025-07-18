@@ -2,21 +2,43 @@ import { useState, useEffect } from 'react';
 import ProductCard from './ProductCard';
 import { Package } from 'lucide-react';
 import { getProducts } from '../../../service/Products/Product';
-import axios from 'axios'
+import axios from 'axios';
+import Pagination from '../../../components/Pagination';
+import Loader from '../../../components/Loader';
+
 export default function ProductGrid() {
   const [viewMode, setViewMode] = useState('grid');
   const [products, setProducts] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [loading, setLoading] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState([]);
   const [priceRange, setPriceRange] = useState([0, 10000]);
 
   useEffect(() => {
     async function fetchProducts() {
-      const response = await getProducts();
-      console.log([response])
-      setProducts(response.products.data);
+      setLoading(true);
+      try {
+        // You may want to update this to use axios directly if getProducts doesn't support pagination
+        const response = await axios.get(`http://localhost:8000/api/v1/products?page=${currentPage}`, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          }
+        });
+        setProducts(response.data.products.data);
+        setTotalPages(response.data.products.last_page || 1);
+        setTotalProducts(response.data.products.total || 0);
+      } catch (err) {
+        setProducts([]);
+        setTotalPages(1);
+        setTotalProducts(0);
+      } finally {
+        setLoading(false);
+      }
     }
     fetchProducts();
-  }, []);
+  }, [currentPage]);
 
   function onAddToCart(product) {
     // Handle adding product to cart
@@ -51,7 +73,7 @@ export default function ProductGrid() {
     'Jewelry',
   ];
 
-  // Filtering logic
+  // Filtering logic (only on current page's products)
   let filteredProducts = products.filter((product) => product.stock > 0);
 
   // Apply category filter
@@ -163,6 +185,14 @@ export default function ProductGrid() {
     </div>
   );
 
+  if (loading) {
+    return (
+      <div className='flex items-center justify-center h-96'>
+        <Loader />
+      </div>
+    );
+  }
+
   if (filteredProducts.length === 0) {
     return (
       <div className='bg-white/70 backdrop-blur-sm border border-gray-200 rounded-2xl p-6 w-full'>
@@ -203,6 +233,11 @@ export default function ProductGrid() {
           />
         ))}
       </div>
+      <Pagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
     </div>
   );
 }

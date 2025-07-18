@@ -19,25 +19,25 @@ class ProductsController
      */
     public function index()
     {
-        $products = Product::with(['images', 'categories'])->where('accepted', true)->paginate(40);
-        $trending_products = Product::with(['images', 'categories'])
-            ->where('accepted', true)
-            ->select('products.id', 'products.name', 'products.description', 'products.price', DB::raw('COUNT(purchases.id) as total_purchases'))
-            ->join('purchases', 'products.id', '=', 'purchases.product_id')
-            ->groupBy('products.id', 'products.name', 'products.description', 'products.price')
-            ->orderBy('total_purchases', 'desc')
-            ->limit(10)
-            ->paginate(10);
+        $products = Product::with(['images', 'categories'])->where('accepted', true)->paginate(1);
+        // $trending_products = Product::with(['images', 'categories'])
+        //     ->where('accepted', true)
+        //     ->select('products.id', 'products.name', 'products.description', 'products.price', DB::raw('COUNT(purchases.id) as total_purchases'))
+        //     ->join('purchases', 'products.id', '=', 'purchases.product_id')
+        //     ->groupBy('products.id', 'products.name', 'products.description', 'products.price')
+        //     ->orderBy('total_purchases', 'desc')
+        //     ->limit(10)
+        //     ->paginate(1);
 
-        $latest_products = Product::where('accepted', true)
-            ->orderBy('created_at', 'desc')->paginate(40);
+        // $latest_products = Product::where('accepted', true)
+        //     ->orderBy('created_at', 'desc')->paginate(1);
 
         return response()->json([
             'success' => true,
             'message' => 'Products fetched successfully',
             'products' => $products,
-            'trending_products' => $trending_products,
-            'latest_products' => $latest_products,
+            // 'trending_products' => $trending_products,
+            // 'latest_products' => $latest_products,
         ]);
     }
 
