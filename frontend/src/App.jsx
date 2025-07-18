@@ -36,6 +36,7 @@ import AdminLayout from './layouts/AdminLayout.jsx';
 import ProductEdit from './pages/ProductEdit.jsx';
 import { Toaster } from 'react-hot-toast'
 import VisitShop from './pages/VisitShop.jsx';
+import Search from './pages/Search.jsx';
 import { useEffect } from 'react';
 import axios from 'axios'
 import unloadHandler from './components/UnloadHandler.jsx';
@@ -52,6 +53,7 @@ export default function App() {
           <CartProvider>
             <Toaster />
             <Routes>
+  <Route path='/search' element={<Search />} />
                 <Route path='/' index element={<Welcome />} />
                 <Route path='/login' element={<Login />} />
                 <Route path='/create-account' element={<CreateAccount />} />

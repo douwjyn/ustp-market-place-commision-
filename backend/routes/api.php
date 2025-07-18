@@ -68,6 +68,7 @@ Route::prefix('v1')->group(function () {
     // Global Products routes
     Route::prefix('products')->group(function () {
       Route::get('/', [ProductsController::class, 'index']);
+      Route::get('/search', [ProductsController::class, 'search']);
       Route::get('/{id}', [ProductsController::class, 'show']);
       Route::post('/{id}', [ProductsController::class, 'update']);
       // Route::post('/{id}/purchase/{quantity}', [ProductsController::class, 'buy']);
