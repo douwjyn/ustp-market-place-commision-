@@ -47,7 +47,7 @@ class ProductsController
         $products = null;
 
         if ($request->has('q')) {
-            $products = Product::with('images')->where('name', 'like', '%' . $request->q . '%')->paginate(40);
+            $products = Product::with('images')->where('name', 'like', '%' . $request->q . '%')->paginate(20);
         }
         return response()->json([
             'success' => true,
