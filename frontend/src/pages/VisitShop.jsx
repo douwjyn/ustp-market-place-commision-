@@ -8,7 +8,7 @@ export default function VisitShop() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [productsLoading, setProductsLoading] = useState(true);
-    const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
+    const [viewMode, setViewMode] = useState('grid'); 
     const [searchQuery, setSearchQuery] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [sortBy, setSortBy] = useState('newest');
@@ -37,11 +37,9 @@ export default function VisitShop() {
 
             console.log('shop info', response);
 
-            // Extract shop data from the response
             const shopData = response.data.shop;
             setShopInfo(shopData);
 
-            // Set products from the shop data
             if (shopData.products && Array.isArray(shopData.products)) {
                 setProducts(shopData.products);
             }
@@ -54,14 +52,13 @@ export default function VisitShop() {
             setLoading(false);
             setProductsLoading(false);
 
-            // Fallback: Set mock data if backend connection fails
-            setShopInfo({
-                name: "Sample Shop",
-                email: "shop@example.com",
-                phone: "9123456789",
-                house_ward: "123 Main Street, Barangay Centro",
-                district_province: "Cagayan de Oro, Misamis Oriental"
-            });
+            // setShopInfo({
+            //     name: "Sample Shop",
+            //     email: "shop@example.com",
+            //     phone: "9123456789",
+            //     house_ward: "123 Main Street, Barangay Centro",
+            //     district_province: "Cagayan de Oro, Misamis Oriental"
+            // });
         }
     };
 
@@ -90,12 +87,10 @@ export default function VisitShop() {
         navigate(`/app/dashboard`)
     };
 
-    // Get unique categories from products
     const categories = ['all', ...new Set(products.flatMap(product =>
         product.categories?.map(cat => cat.name || cat) || []
     ))];
 
-    // Filter and sort products
     const filteredProducts = products
         .filter(product => {
             const matchesSearch = product.name?.toLowerCase().includes(searchQuery.toLowerCase());

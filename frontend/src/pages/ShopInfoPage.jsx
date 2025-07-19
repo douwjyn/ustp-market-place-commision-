@@ -54,8 +54,7 @@ export default function ShopInfoPage() {
         });
 
         const data = response.data
-        console.log('orders', data);
-        setOrders(data.orders); // assuming the orders are in data.data
+        setOrders(data.orders);
 
       } catch (err) {
         if (err.response.data.message) {
