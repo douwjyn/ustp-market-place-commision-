@@ -208,14 +208,14 @@ class ProductsController
             ], 404);
         }
 
-        $user_purchase = Purchase::where('user_id', $user->id)->where('status', 'delivered')->first();
+        // $user_purchase = Purchase::where('user_id', $user->id)->where('product_id', $)->where('status', 'delivered')->first();
 
-        if ($user_purchase) {
-            return response()->json([
-                'success' => false,
-                'message' => 'You have already received a purchase, you cannot cancel it',
-            ], 404);
-        }
+        // if ($user_purchase) {
+        //     return response()->json([
+        //         'success' => false,
+        //         'message' => 'You have already received a purchase, you cannot cancel it',
+        //     ], 404);
+        // }
 
         $purchase->status = $action;
         $purchase->product->stock = $purchase->product->stock + $purchase->quantity;

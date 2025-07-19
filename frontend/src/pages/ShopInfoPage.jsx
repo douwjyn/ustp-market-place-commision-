@@ -577,17 +577,19 @@ export default function ShopInfoPage() {
                               <p className="text-gray-900 font-medium">{order.product?.name || 'N/A'}</p>
                               <p className="text-gray-600 text-sm">Variation: {order.product?.variation || 'N/A'}</p>
                               <p className="text-gray-600 text-sm mt-1">Location: {order.user?.address || 'N/A'}</p>
+                              <p className="text-gray-600 text-sm mt-1">Customer: {order.user?.email || 'N/A'}</p>
+                              <p className="text-gray-600 text-sm mt-1">Contact: {order.user?.phone || 'N/A'}</p>
                             </div>
                           </div>
                           <div className="text-gray-800 text-right pr-8 font-medium">{order.quantity}</div>
                           <div className="text-gray-800 text-right pr-8 font-medium">₱{order.price.toLocaleString()}</div>
                           <div className="text-right pr-8">
                             <div className="text-gray-900 font-semibold">₱{(order.price * order.quantity).toLocaleString()}</div>
-                            <div className="mt-3 flex justify-end">
+                            {/* <div className="mt-3 flex justify-end">
                               <button className="px-4 py-2 text-white bg-[#213567] rounded-lg text-sm font-medium hover:bg-[#1a2c4d] transition-colors duration-200 shadow-sm hover:shadow-md">
                                 View Details
                               </button>
-                            </div>
+                            </div> */}
                           </div>
                         </div>
 
