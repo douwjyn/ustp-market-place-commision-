@@ -106,19 +106,19 @@ export default function ShopInfoPage() {
 
   const handleDeliverOrder = async (order_id) => {
     try {
-      const response = await axios.put(`http://localhost:8000/api/v1/own-products/${order_id}/purchase-status/Delivered`, {}, {
-        headers: {
-          Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
-        },
-      });
-      console.log('Order delivered:', response.data);
-
-      // Update the local state to reflect the change
-      setOrders(prevOrders =>
-        prevOrders.map(order =>
-          order.id === order_id ? { ...order, status: 'Delivered' } : order
-        )
-      );
+      if (confirm("Mark order as delivered?")) {
+        const response = await axios.put(`http://localhost:8000/api/v1/own-products/${order_id}/purchase-status/Delivered`, {}, {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("access_token")}`,
+          },
+        });
+        setOrders(prevOrders =>
+          prevOrders.map(order =>
+            order.id === order_id ? { ...order, status: 'Delivered' } : order
+          )
+        );
+        console.log('Order delivered:', response.data);
+      }
     } catch (error) {
       console.error('Error marking order as delivered:', error);
     }
@@ -369,7 +369,7 @@ export default function ShopInfoPage() {
                             </div>
                           </div>
                           <div className="text-gray-800 text-right pr-8 font-medium">{order.quantity}</div>
-                          <div className="text-gray-800 text-right pr-8 font-medium">₱{ order.price - (order.price * order.discount_percentage / 100).toLocaleString()}</div>
+                          <div className="text-gray-800 text-right pr-8 font-medium">₱{order.price - (order.price * order.discount_percentage / 100).toLocaleString()}</div>
                           <div className="text-right pr-8">
                             <div className="text-gray-900 font-semibold">₱{(order.total).toLocaleString()}</div>
                             <div className="mt-3 flex justify-end space-x-2">
