@@ -4,9 +4,10 @@ import { useUser } from '../context/UserProvider'
 import Navbar from '../components/Navbar';
 import { useEffect } from 'react'
 import axios from 'axios'
+import { api } from '../lib/axios';
 
 function DefaultLayout() {
-  const { user } = useUser();
+  const { user, setUserToken } = useUser();
   const location = useLocation();
   const navigate = useNavigate()
 
