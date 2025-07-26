@@ -53,13 +53,13 @@ export default function App() {
           <CartProvider>
             <Toaster />
             <Routes>
-  <Route path='/search' element={<Search />} />
-                <Route path='/' index element={<Welcome />} />
-                <Route path='/login' element={<Login />} />
-                <Route path='/create-account' element={<CreateAccount />} />
-                <Route path='/thank-you' element={<ThankYouPage />} />
-                <Route path='/forgot-password' element={<ForgotPassword />} />
-                <Route path='/reset-password/:token' element={<ResetPassword />} />
+              <Route path='/search' element={<Search />} />
+              <Route path='/' index element={<Welcome />} />
+              <Route path='/login' element={<Login />} />
+              <Route path='/create-account' element={<CreateAccount />} />
+              <Route path='/thank-you' element={<ThankYouPage />} />
+              <Route path='/forgot-password' element={<ForgotPassword />} />
+              <Route path='/reset-password/:token' element={<ResetPassword />} />
               <Route path='/admin'>
                 <Route path='login' element={<AddLogin />} />
                 <Route

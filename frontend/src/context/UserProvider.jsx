@@ -40,7 +40,10 @@ export default function UserProvider({ children }) {
   ];
 
   useEffect(() => {
-       getUser()
+    const token = sessionStorage.getItem('access_token');
+    if (token) {
+      getUser()
+    }
 
     // const token = sessionStorage.getItem('access_token');
     // console.log(token);
